@@ -11,22 +11,6 @@
     <name>ShoppingCartSWD</name>
 
     <dependencies>
-        <!-- Java EE API -->
-        <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>9.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Servlet API -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>5.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Microsoft SQL Server JDBC Driver -->
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>

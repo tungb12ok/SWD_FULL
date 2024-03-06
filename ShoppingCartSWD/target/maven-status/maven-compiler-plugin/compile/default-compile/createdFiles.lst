@@ -1,0 +1,10 @@
+Model\Product.class
+Model\OrderDetail.class
+Model\Order.class
+Model\Transactions.class
+DAO\DBcontext.class
+DAO\ProductDAO.class
+Model\User.class
+DAO\OrderDetailDAO.class
+DAO\UserDAO.class
+DAO\OrderDAO.class

@@ -1,7 +1,6 @@
 Model\Product.class
 Model\OrderDetail.class
 Model\Order.class
-DAO\BaseDAO.class
 Model\Transactions.class
 DAO\DBcontext.class
 DAO\ProductDAO.class

@@ -1,5 +1,4 @@
 Model\Product.class
-DAO\TransactionDAO.class
 Model\OrderDetail.class
 Model\Order.class
 DAO\BaseDAO.class

@@ -80,7 +80,8 @@
 	<%
 	} else if ("customer".equalsIgnoreCase(userType)) { //CUSTOMER HEADER
 
-	int notf = new CartServiceImpl().getCartCount((String) session.getAttribute("username"));
+	int notf = 1;
+//new CartServiceImpl().getCartCount((String) session.getAttribute("username"));
 	%>
 	<nav class="navbar navbar-default navbar-fixed-top">
 

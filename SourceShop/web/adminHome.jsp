@@ -35,19 +35,19 @@
 //		response.sendRedirect("login.jsp?message=Session Expired, Login Again!!");
 
 //	}
-//        if(request.getAttribute("pageNumber") == null || request.getAttribute("totalPages") == null 
-//        || request.getAttribute("startIndex") == null){
-//                response.sendRedirect("./ProductController");
-//            }else{
-//            int pageNumber = (int)request.getAttribute("pageNumber");
-//            int totalPages = (int)request.getAttribute("totalPages");
-//            int startIndex = (int)request.getAttribute("startIndex");
-//            List<Product> listP = (List<Product>) request.getAttribute("products");
-//            }
+        if(request.getAttribute("pageNumber") == null || request.getAttribute("totalPages") == null 
+        || request.getAttribute("startIndex") == null){
+                response.sendRedirect("./ProductController");
+            }else{
+            int pageNumber = (int)request.getAttribute("pageNumber");
+            int totalPages = (int)request.getAttribute("totalPages");
+            int startIndex = (int)request.getAttribute("startIndex");
+            List<Product> listP = (List<Product>) request.getAttribute("products");
+            }
         %>
 
         <jsp:include page="header.jsp" />
-        <h1>${p.size()}</h1>
+        
         <div class="products" style="background-color: #E6F9E6;">
 
             <div class="tab" align="center">

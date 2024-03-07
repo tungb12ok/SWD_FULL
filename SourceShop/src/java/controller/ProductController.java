@@ -59,18 +59,17 @@ public class ProductController extends HttpServlet {
             pageNumber = Integer.parseInt(pageRaw);
 
         }
-//        int pageSize = 10;
-//        int totalProducts = productDAO.getTotalProducts();
-//        int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-//        int startIndex = (pageNumber - 1) * pageSize;
-//
-//        List<Product> products = productDAO.getProducts(startIndex, pageSize);
-//
-//        request.setAttribute("pageNumber", pageNumber);
-//        request.setAttribute("totalPages", totalPages);
-//        request.setAttribute("products", products);
-        ProductDAO pDAO = new ProductDAO();
-        request.setAttribute("p", pDAO.getAllProducts());
+        int pageSize = 10;
+        int totalProducts = productDAO.getTotalProducts();
+        int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+        int startIndex = (pageNumber - 1) * pageSize;
+
+        List<Product> products = productDAO.getProducts(startIndex, pageSize);
+
+        request.setAttribute("pageNumber", pageNumber);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("products", products);
+
         request.getRequestDispatcher("adminHome.jsp").forward(request, response);
     }
 

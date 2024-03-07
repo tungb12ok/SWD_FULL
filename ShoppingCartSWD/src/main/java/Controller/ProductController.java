@@ -4,6 +4,8 @@
  */
 package Controller;
 
+import DAO.*;
+import Model.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.*;
 
 /**
  *
@@ -19,15 +22,8 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
 public class ProductController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private ProductDAO productDAO = new ProductDAO();
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -36,7 +32,7 @@ public class ProductController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ProductController</title>");            
+            out.println("<title>Servlet ProductController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ProductController at " + request.getContextPath() + "</h1>");
@@ -57,7 +53,18 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        int pageNumber = Integer.parseInt(request.getParameter("page"));
+        int pageSize = 10;
+        int totalProducts = productDAO.getTotalProducts();
+        int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+        int startIndex = (pageNumber - 1) * pageSize;
+
+        List<Product> products = productDAO.getProducts(startIndex, pageSize);
+
+        request.setAttribute("pageNumber", pageNumber);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("products", products);
+        request.getRequestDispatcher("adminHome.jsp").forward(request, response);
     }
 
     /**

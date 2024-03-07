@@ -120,6 +120,53 @@ public class ProductDAO extends DBcontext {
         }
     }
 
+    public int getTotalProducts() {
+        String sql = "SELECT COUNT(*) AS total FROM product";
+        int totalProducts = 0;
+        try ( PreparedStatement statement = connection.prepareStatement(sql);  ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                totalProducts = resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalProducts;
+    }
+
+    // get list product by page
+    public List<Product> getProducts(int startIndex, int pageSize) {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM product ORDER BY pid OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try ( PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, startIndex);
+            statement.setInt(2, pageSize);
+
+            try ( ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Product product = new Product();
+                    product.setProductId(resultSet.getInt("pid"));
+                    product.setProductName(resultSet.getString("pname"));
+                    product.setProductType(resultSet.getString("ptype"));
+                    product.setProductInfo(resultSet.getString("pinfo"));
+                    product.setProductPrice(resultSet.getDouble("pprice"));
+                    product.setProductQuantity(resultSet.getInt("pquantity"));
+                    product.setImage(resultSet.getString("image"));
+                    product.setStatus(resultSet.getString("status"));
+                    product.setSale(resultSet.getDouble("sale"));
+                    products.add(product);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
 

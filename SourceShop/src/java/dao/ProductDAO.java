@@ -163,53 +163,53 @@ public class ProductDAO extends DBcontext {
 
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
-
-        // Test addProduct method
-        Product newProduct = new Product();
-        newProduct.setProductName("Test Product");
-        newProduct.setCateId(1); // Assuming category ID 1 exists
-        newProduct.setProductInfo("This is a test product");
-        newProduct.setProductPrice(10.99);
-        newProduct.setProductQuantity(100);
-        newProduct.setImage("test_image.jpg");
-        newProduct.setStatus("Active");
-        newProduct.setSale(0.0); // No sale currently
-
-        boolean addSuccess = dao.addProduct(newProduct);
-        if (addSuccess) {
-            System.out.println("Product added successfully.");
-        } else {
-            System.out.println("Failed to add product.");
-        }
-
-        // Test getAllProducts method
-        List<Product> allProducts = dao.getAllProducts();
-        System.out.println("All Products:");
-        for (Product product : allProducts) {
-            System.out.println(product);
-        }
-
-        // Test updateProduct method
-        if (!allProducts.isEmpty()) {
-            Product productToUpdate = allProducts.get(0); // Update the first product
-            productToUpdate.setProductName("Updated Product Name");
-            boolean updateSuccess = dao.updateProduct(productToUpdate);
-            if (updateSuccess) {
-                System.out.println("Product updated successfully.");
-            } else {
-                System.out.println("Failed to update product.");
-            }
-        }
-
-        // Test deleteProduct method
-        if (!allProducts.isEmpty()) {
-            int productIdToDelete = allProducts.get(0).getProductId(); // Delete the first product
-            boolean deleteSuccess = dao.deleteProduct(productIdToDelete);
-            if (deleteSuccess) {
-                System.out.println("Product deleted successfully.");
-            } else {
-                System.out.println("Failed to delete product.");
-            }
-        }
+        System.out.println(dao.getProducts(0, 10));
+//        // Test addProduct method
+//        Product newProduct = new Product();
+//        newProduct.setProductName("Test Product");
+//        newProduct.setCateId(1); // Assuming category ID 1 exists
+//        newProduct.setProductInfo("This is a test product");
+//        newProduct.setProductPrice(10.99);
+//        newProduct.setProductQuantity(100);
+//        newProduct.setImage("test_image.jpg");
+//        newProduct.setStatus("Active");
+//        newProduct.setSale(0.0); // No sale currently
+//
+//        boolean addSuccess = dao.addProduct(newProduct);
+//        if (addSuccess) {
+//            System.out.println("Product added successfully.");
+//        } else {
+//            System.out.println("Failed to add product.");
+//        }
+//
+//        // Test getAllProducts method
+//        List<Product> allProducts = dao.getAllProducts();
+//        System.out.println("All Products:");
+//        for (Product product : allProducts) {
+//            System.out.println(product);
+//        }
+//
+//        // Test updateProduct method
+//        if (!allProducts.isEmpty()) {
+//            Product productToUpdate = allProducts.get(0); // Update the first product
+//            productToUpdate.setProductName("Updated Product Name");
+//            boolean updateSuccess = dao.updateProduct(productToUpdate);
+//            if (updateSuccess) {
+//                System.out.println("Product updated successfully.");
+//            } else {
+//                System.out.println("Failed to update product.");
+//            }
+//        }
+//
+//        // Test deleteProduct method
+//        if (!allProducts.isEmpty()) {
+//            int productIdToDelete = allProducts.get(0).getProductId(); // Delete the first product
+//            boolean deleteSuccess = dao.deleteProduct(productIdToDelete);
+//            if (deleteSuccess) {
+//                System.out.println("Product deleted successfully.");
+//            } else {
+//                System.out.println("Failed to delete product.");
+//            }
+//        }
     }
 }

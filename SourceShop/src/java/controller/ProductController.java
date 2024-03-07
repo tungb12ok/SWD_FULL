@@ -69,7 +69,6 @@ public class ProductController extends HttpServlet {
         request.setAttribute("pageNumber", pageNumber);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("products", products);
-
         request.getRequestDispatcher("adminHome.jsp").forward(request, response);
     }
 

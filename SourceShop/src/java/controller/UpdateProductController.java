@@ -70,9 +70,11 @@ public class UpdateProductController extends HttpServlet {
             product.setCateId(cateId);
             product.setSale(product.getSale()/100);
             Product p = productDAO.getProductById(product.getProductId());
-            if(p!= null){
+            if(product.getProductId() != 0){
                 p = new Product(product);
                 productDAO.updateProduct(p);
+            }else{
+                productDAO.addProduct(product);
             }
             System.out.println(p);
             response.setContentType("application/json");

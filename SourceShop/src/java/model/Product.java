@@ -17,4 +17,20 @@ public class Product {
     private String image;
     private String status;
     private double sale;
+    
+     public Product() {
+        
+    }
+    
+    public Product(Product other) {
+        this.productId = other.productId;
+        this.productName = other.productName;
+        this.productInfo = other.productInfo;
+        this.productQuantity = other.productQuantity;
+        this.productPrice = other.productPrice;
+        this.sale = other.sale;
+        this.status = other.status;
+        this.image = other.image;
+        this.cateId = other.cateId;
+    }
 }

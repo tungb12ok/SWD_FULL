@@ -5,11 +5,13 @@ import model.Product;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import model.Categories;
 
 public class ProductDAO extends DBcontext {
-
+    
     public boolean addProduct(Product product) {
         String sql = "INSERT INTO product (pname, cateId, pinfo, pprice, pquantity, image, status, sale) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
@@ -22,7 +24,7 @@ public class ProductDAO extends DBcontext {
             statement.setString(6, product.getImage());
             statement.setString(7, product.getStatus());
             statement.setDouble(8, product.getSale());
-
+            
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e) {
@@ -30,12 +32,12 @@ public class ProductDAO extends DBcontext {
             return false;
         }
     }
-
+    
     public List<Product> getAllProducts() {
         List<Product> productList = new ArrayList<>();
         String sql = "SELECT pid, pname, cateId, pinfo, pprice, pquantity, image, status, sale FROM product";
         try ( PreparedStatement statement = connection.prepareStatement(sql);  ResultSet resultSet = statement.executeQuery()) {
-
+            
             while (resultSet.next()) {
                 Product product = new Product();
                 product.setProductId(resultSet.getInt("pid"));
@@ -47,7 +49,7 @@ public class ProductDAO extends DBcontext {
                 product.setImage(resultSet.getString("image"));
                 product.setStatus(resultSet.getString("status"));
                 product.setSale(resultSet.getDouble("sale"));
-
+                
                 productList.add(product);
             }
         } catch (SQLException e) {
@@ -55,7 +57,7 @@ public class ProductDAO extends DBcontext {
         }
         return productList;
     }
-
+    
     public Product getProductById(int productId) {
         String sql = "SELECT pid, pname, cateId, pinfo, pprice, pquantity, image, status, sale FROM product WHERE pid = ?";
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -80,7 +82,7 @@ public class ProductDAO extends DBcontext {
         }
         return null;
     }
-
+    
     public boolean updateProduct(Product product) {
         String sql = "UPDATE product SET pname=?, cateId=?, pinfo=?, pprice=?, pquantity=?, image=?, status=?, sale=? WHERE pid=?";
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -93,7 +95,7 @@ public class ProductDAO extends DBcontext {
             statement.setString(7, product.getStatus());
             statement.setDouble(8, product.getSale());
             statement.setInt(9, product.getProductId());
-
+            
             int rowsUpdated = statement.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
@@ -101,12 +103,12 @@ public class ProductDAO extends DBcontext {
             return false;
         }
     }
-
+    
     public boolean deleteProduct(int productId) {
         String sql = "DELETE FROM product WHERE pid=?";
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, productId);
-
+            
             int rowsDeleted = statement.executeUpdate();
             return rowsDeleted > 0;
         } catch (SQLException e) {
@@ -114,31 +116,31 @@ public class ProductDAO extends DBcontext {
             return false;
         }
     }
-
+    
     public int getTotalProducts() {
         String sql = "SELECT COUNT(*) AS total FROM product";
         int totalProducts = 0;
         try ( PreparedStatement statement = connection.prepareStatement(sql);  ResultSet resultSet = statement.executeQuery()) {
-
+            
             if (resultSet.next()) {
                 totalProducts = resultSet.getInt("total");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        
         return totalProducts;
     }
-
+    
     public List<Product> getProducts(int startIndex, int pageSize) {
         List<Product> products = new ArrayList<>();
         // For MySQL, use LIMIT and OFFSET
         String sql = "SELECT * FROM product ORDER BY pid LIMIT ? OFFSET ?";
-
+        
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, pageSize);
             statement.setInt(2, startIndex);
-
+            
             try ( ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Product product = new Product();
@@ -157,13 +159,71 @@ public class ProductDAO extends DBcontext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        
         return products;
     }
-
+    
+    public List<Categories> getAllCategories() {
+        List<Categories> categorieses = new ArrayList<>();
+        String sql = "SELECT * FROM categories";
+        try ( PreparedStatement statement = connection.prepareStatement(sql)) {            
+            
+            try ( ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Categories cate = new Categories();
+                    cate.setCateId(resultSet.getInt("id"));
+                    cate.setName(resultSet.getString("name"));
+                    categorieses.add(cate);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return categorieses;
+    }
+    
+    public Categories getCategoriesByName(String name) {
+       Categories cate = new Categories();
+        String sql = "SELECT * FROM categories where name =?";
+        try ( PreparedStatement statement = connection.prepareStatement(sql)) {            
+            statement.setString(1, name);
+            try ( ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    cate.setCateId(resultSet.getInt("id"));
+                    cate.setName(resultSet.getString("name"));                   
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return cate;
+    }
+    
+    public int addCategory(String name) {
+        String sql = "INSERT INTO categories (name) VALUES (?)";
+        try {
+           PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, name);           
+            
+            int rowsInserted = statement.executeUpdate();
+            if (rowsInserted > 0) {            
+           ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            }
+        }
+        return -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
-        System.out.println(dao.getProducts(0, 10));
+        System.out.println(dao.addCategory("Ngoc111123"));
 //        // Test addProduct method
 //        Product newProduct = new Product();
 //        newProduct.setProductName("Test Product");

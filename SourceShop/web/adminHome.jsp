@@ -2,6 +2,7 @@
          pageEncoding="ISO-8859-1"%>
 <%@page import="model.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page
     import="com.shashi.service.impl.*, com.shashi.service.*,com.shashi.beans.*,java.util.*,java.io.*"%>
     <!DOCTYPE html>
@@ -17,7 +18,7 @@
             src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
             <script
             src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-             
+            <link rel="stylesheet" href="css/styleAdminProduct.css">
         </head>
         <body style="background-color: #E6F9E6;">
             <%
@@ -47,23 +48,36 @@
             <div class="products" style="background-color: #E6F9E6;">
 
                 <div class="container">
-                    <h2>Danh sách s?n ph?m</h2>
+                    <h2>Product Management</h2>
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Tên s?n ph?m</th>
-                                <th>Giá</th>
-                                <th>Mô t?</th>
+                                <th style="width: 20%;">Product Images</th>
+                                <th style="width: 15%;">Product Name</th>
+                                <th style="width: 25%;">Product Information</th>
+                                <th style="width: 10%;">Product Price</th>
+                                <th style="width: 10%;">Sale</th>
+                                <th style="width: 10%;">Status</th>
+                                <th style="width: 10%;"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach var="product" items="${products}">
                                 <tr>
-                                    <td>${product.productId}</td>
+                                    <td>
+                                        <img src="${product.image}" width="150px" height="100px" alt="alt"/>
+                                    </td>
                                     <td>${product.productName}</td>
-                                    <td>${product.productPrice}</td>
                                     <td>${product.productInfo}</td>
+                                    <td>
+                                        <fmt:formatNumber value="${product.productPrice}" pattern="#,##0 VND"/>
+                                    </td>
+
+                                    <td>${product.sale}</td>
+                                    <td>${product.status}</td>
+                                    <td>
+                                        <button id="openModalBtn" onclick="openModalProduct(${product.productId})">Details</button>
+                                    </td>
                                 </tr>
                             </c:forEach>
                         </tbody>
@@ -78,6 +92,69 @@
                         <li onclick="getProductPage(<%= i %>)"class="<%= cssClass %>"><a style="cursor: pointer;"><%= i %></a></li>
                             <% } %>
                     </ul>
+                </div>
+
+                <div id="productDetailModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2 id="title-name" style="text-align: center;"></h2>
+                        <div style="width: 500px; border-bottom: 1px solid black; position: absolute; left: 230px"></div>
+                        <div class="product-infor">
+                            <div class="product-image" style="align-content: center;display: flex;">
+                                <img id="pImage" src="" width="150px" height="100px" alt="alt" style="margin: 10px 0 10px 200px;"/>
+                                <div style="padding-left: 50px;padding-top: 30px;">
+                                    <label for="input-file" id="custom-button" style="cursor: pointer; display: inline-block; padding: 10px 20px; border: 1px solid #ccc; background-color: #f0f0f0; border-radius: 5px;">Choose Image</label>
+                                </div>
+                                <div style="padding-left: 50px;padding-top: 10px;">
+                                    <img id="file-name" src="" width="150px" height="100px" style="display:none; margin-left: 10px;">
+                                </div>
+
+                                <input type="file" id="input-file" style="display: none;">                             
+                            </div>
+                            <div style="padding: 0 70px;">
+                                <div style="padding-bottom: 20px;">
+                                    <label class="form-check-label" style="padding-bottom: 8px;">Product Name</label></br>
+                                    <input class="form-control" type="text" id="pName" style=""> 
+                                </div>
+                                <div style="padding-bottom: 20px;">
+                                    <label class="form-check-label" style="padding-bottom: 8px;">Product Information</label></br>
+                                    <textarea class="form-control" type="text" id="pInfor" rows="4" style=""> </textarea>
+                                </div>
+                                <div style="padding-bottom: 20px; display: flex;">
+                                    <div style="width: 250px;">
+                                        <label class="form-check-label" style="padding-bottom: 8px;">Product Quantity</label></br>
+                                        <input class="form-control" type="text" id="pQuantity" style="">
+                                    </div>
+                                    <div style="padding-left: 20px;width: 250px;">
+                                        <label class="form-check-label" style="padding-bottom: 8px;">Product Price</label></br>
+                                        <input class="form-control" type="text" id="pPrice" style="" oninput="formatMoney(this)">
+                                    </div>
+                                    <div style="padding-left: 20px;width: 250px;">
+                                        <label class="form-check-label" style="padding-bottom: 8px;">Product Category</label></br>
+                                        <select class="form-control" id="cateid"></select>
+                                    </div>
+                                </div>
+                                <div style="padding-bottom: 20px; display: flex;">
+                                    <div style="width: 250px;">
+                                        <label class="form-check-label" style="padding-bottom: 8px;">Product Sale</label></br>
+                                        <input class="form-control" type="text" id="pSale" style="">
+                                    </div>
+                                    <div style="padding-left: 20px;width: 250px;">
+                                        <label class="form-check-label" style="padding-bottom: 8px;">Product Status</label></br>
+                                        <button id="pStatus" style="width: 100px !important;" class="btn-status">Inactive</button>                                        
+                                    </div>
+
+                                    <div style="padding-left: 20px;width: 250px;">
+                                        <label class="form-check-label" style="padding-bottom: 8px;">New Category</label></br>
+                                        <input class="form-control" type="text" id="newCate" style="">                                        
+                                    </div>
+                                </div>
+                                <div style="padding-bottom: 20px;">
+                                    <button style="margin: 0 250px;" id="updateP">Save Information</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="tab" align="center">
@@ -103,9 +180,8 @@
             </div>
 
             <%@ include file="footer.html"%>
-           <script>
+            <script>
                 function getProductPage(page) {
-                    console.log(page);
                     fetch('ProductController?page=' + page, {
                         method: 'GET',
                         headers: {
@@ -116,7 +192,168 @@
                                 console.error('?ã có l?i x?y ra:', error);
                             });
                 }
+
+                function openModalProduct(pid) {
+                    fetch('ProductController?productId=' + pid, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                var productData = JSON.parse(data.product);
+                                var categoryData = JSON.parse(data.categories);
+                                if (productData.productId != null) {
+                                    displayProductDetails(productData, categoryData);
+                                } else {
+                                    document.getElementById('title-name').textContent = 'Create New Product';
+                                }
+                                document.getElementById('productDetailModal').style.display = 'block';
+                            })
+                            .catch(error => {
+                                console.error('?ã có l?i x?y ra:', error);
+                            });
+                }
+
+                function displayProductDetails(data, categoryData) {
+                    document.getElementById('pImage').src = data.image;
+                    document.getElementById('pName').value = data.productName;
+                    document.getElementById('pInfor').textContent = data.productInfo;
+                    document.getElementById('pSale').value = data.sale;
+                    document.getElementById('pPrice').value = formatNumber(data.productPrice);
+                    document.getElementById('pQuantity').value = data.productQuantity;
+                    if (data.status === "Active") {
+                        var toggleButton = document.getElementById("pStatus");
+                        toggleButton.textContent = "Active";
+                        toggleButton.classList.toggle("active");
+                    }
+                    var select = document.getElementById('cateid');
+                    categoryData.forEach(function (item) {
+                        var option = document.createElement('option');
+                        option.value = item.cateId;
+                        option.textContent = item.name;
+                        select.appendChild(option);
+                    });
+                    document.getElementById('cateid').value = data.cateId;
+                    document.getElementById('updateP').addEventListener('click', function () {
+                        updateProduct(data.productId);
+                    });
+                    document.getElementById('title-name').textContent = 'Product Detail: ' + data.productName;
+                }
+
+                function formatMoney(input) {
+                    let value = input.value;
+                    value = value.replace(/[^\d.]/g, '');
+                    let parts = value.split('.');
+                    let integerPart = parts[0];
+                    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    input.value = integerPart;
+                }
+
+                function formatNumber(value) {
+                    let money = Math.round(value);
+                    value = money.toString().replace(/[^\d.]/g, '');
+                    let parts = value.split('.');
+                    let integerPart = parts[0];
+                    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    return integerPart;
+                }
+
+                function updateProduct(productId) {
+                    let newCate = document.getElementById('newCate').value;
+                    var product = {
+                        productId: productId,
+                        productName: document.getElementById('pName').value,
+                        productInfo: document.getElementById('pInfor').value,
+                        productQuantity: document.getElementById('pQuantity').value,
+                        productPrice: document.getElementById('pPrice').value.replace(/,/g, ''),
+                        sale: document.getElementById('pSale').value,
+                        status: document.getElementById('pStatus').textContent,
+                        image: document.getElementById('file-name').src !== "http://localhost:9999/SourceShop/ProductController" ? document.getElementById('file-name').src : document.getElementById('pImage').src,
+                        categoryId: newCate === "" ? document.getElementById('cateid').value + ";old" : newCate + ";new"
+                    };
+                    var queryParams = new URLSearchParams();
+                    queryParams.append('product', JSON.stringify(product));
+
+                    fetch('update-product?' + queryParams, {
+                        method: 'GET'
+                    })
+                            .then(response => {
+                                if(response.status === 200){
+                                    window.location.href = './ProductController';
+                                }
+                    })
+                            .catch(error => {
+                                console.error('Có l?i x?y ra:', error);
+                            });
+                }
+
+                function removeOption() {
+                    var select = document.getElementById('cateid');
+                    while (select.firstChild) {
+                        select.removeChild(select.firstChild);
+                    }
+                }
             </script>
         </body>
+        <script>
+            document.getElementById('productDetailModal').addEventListener('click', function (event) {
+                if (event.target === this) {
+                    document.getElementById('productDetailModal').style.display = 'none';
+                    removeOption();
+                }
+            });
 
+            document.getElementsByClassName('close')[0].addEventListener('click', function () {
+                document.getElementById('productDetailModal').style.display = 'none';
+                removeOption();
+            });
+
+            var toggleButton = document.getElementById("pStatus");
+
+            toggleButton.addEventListener("click", function () {
+                var isActive = toggleButton.classList.contains("active");
+                if (isActive) {
+                    toggleButton.textContent = "Inactive";
+                } else {
+                    toggleButton.textContent = "Active";
+                }
+
+                toggleButton.classList.toggle("active");
+            });
+
+//            document.getElementById('custom-button').addEventListener('click', function () {
+//                document.getElementById('input-file').click();
+//            });
+
+            document.getElementById('input-file').addEventListener('change', function () {
+                var fileInput = document.getElementById('input-file');
+                var formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                fetch('update-product', {
+                    method: 'POST',
+                    body: formData
+                })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.text();
+                            }
+                        })
+                        .then(relativeImagePath => {
+                            document.getElementById("file-name").src = relativeImagePath;
+                            document.getElementById("file-name").style.display = "block";
+                        })
+                        .catch(error => {
+                            console.error('L?i:', error);
+                        });
+            });
+
+        </script>
     </html>

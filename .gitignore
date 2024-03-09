@@ -2,3 +2,4 @@
 ./SourceShop/nbproject
 /SourceShop/build
 /SourceShop/dist
+SourceShop/src/java/dao/DBcontext.java

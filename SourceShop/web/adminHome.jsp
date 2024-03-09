@@ -40,7 +40,7 @@
     //	}      
                 int pageNumber = (int)request.getAttribute("pageNumber");
                 int totalPages = (int)request.getAttribute("totalPages");             
-                List<Product> listP = (List<Product>) request.getAttribute("products");            
+                List<Product> listP = (List<Product>) request.getAttribute("products");                
             %>
 
             <jsp:include page="header.jsp" />
@@ -49,6 +49,25 @@
 
                 <div class="container">
                     <h2>Product Management</h2>
+                    <div style="display: flex;padding-bottom: 40px;">
+                        <div class="btn-create" onclick="openModalProduct(-1)">Create New Product</div>
+                        <div style="display: flex; padding-left: 50px;">
+                            <label style="padding: 10px 20px 0 0;">Status:</label>
+                            <select class="form-control" id="filter-status" style="width: 200px; height: 50px;text-align: center;" onchange="filterStatus()">
+                                <option value="Active">Active</option>
+                                <option value="InActive">InActive</option>
+                            </select>
+                        </div>
+
+                        <div style="display: flex; padding-left: 50px;">
+                            <label  style="padding: 10px 20px 0 0;">Category:</label>
+                            <select class="form-control" id="filter-cate" style="width: 200px; height: 50px;text-align: center;" onchange="filterCate()">
+                                <c:forEach var="cate" items="${cates}">
+                                    <option value="${cate.cateId}">${cate.name}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
                     <table class="table">
                         <thead>
                             <tr>
@@ -74,7 +93,16 @@
                                     </td>
 
                                     <td>${product.sale}</td>
-                                    <td>${product.status}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${product.status == 'Active'}">
+                                                <div class="action-status active" id="table-status-${product.productId}" onclick="changeStatus(${product.productId}, '${product.status}')">${product.status}</div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="action-status" id="table-status-${product.productId}" onclick="changeStatus(${product.productId}, '${product.status}')">${product.status}</div>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
                                     <td>
                                         <button id="openModalBtn" onclick="openModalProduct(${product.productId})">Details</button>
                                     </td>
@@ -141,7 +169,7 @@
                                     </div>
                                     <div style="padding-left: 20px;width: 250px;">
                                         <label class="form-check-label" style="padding-bottom: 8px;">Product Status</label></br>
-                                        <button id="pStatus" style="width: 100px !important;" class="btn-status">Inactive</button>                                        
+                                        <button id="pStatus" style="width: 100px !important;" class="btn-status">InActive</button>                                        
                                     </div>
 
                                     <div style="padding-left: 20px;width: 250px;">
@@ -182,15 +210,13 @@
             <%@ include file="footer.html"%>
             <script>
                 function getProductPage(page) {
-                    fetch('ProductController?page=' + page, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                    })
-                            .catch(error => {
-                                console.error('?ã có l?i x?y ra:', error);
-                            });
+                    let url = window.location.href;
+                    if (url.includes('page')) {
+                        url = url.replace(/page=\d+/g, 'page=' + page);
+                    } else {
+                        url += (url.includes('?') ? '&' : '?') + 'page=' + page;
+                    }
+                    window.location.href = url;
                 }
 
                 function openModalProduct(pid) {
@@ -209,12 +235,52 @@
                             .then(data => {
                                 var productData = JSON.parse(data.product);
                                 var categoryData = JSON.parse(data.categories);
-                                if (productData.productId != null) {
+                                if (pid !== -1) {
                                     displayProductDetails(productData, categoryData);
                                 } else {
+                                    var select = document.getElementById('cateid');
+                                    categoryData.forEach(function (item) {
+                                        var option = document.createElement('option');
+                                        option.value = item.cateId;
+                                        option.textContent = item.name;
+                                        select.appendChild(option);
+                                    });
+                                    document.getElementById('pImage').style.display = "none";
+                                    document.getElementById('updateP').addEventListener('click', function () {
+                                        updateProduct(0);
+                                    });
                                     document.getElementById('title-name').textContent = 'Create New Product';
                                 }
                                 document.getElementById('productDetailModal').style.display = 'block';
+                            })
+                            .catch(error => {
+                                console.error('?ã có l?i x?y ra:', error);
+                            });
+                }
+
+                function changeStatus(pid, status) {
+                    fetch('ProductController?pid=' + pid + '&status=' + status, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                var tablbeStatus = document.getElementById("table-status-"+pid);
+
+
+                                var isActive = tablbeStatus.classList.contains("active");
+                                if (isActive) {
+                                    tablbeStatus.textContent = "InActive";
+                                } else {
+                                    tablbeStatus.textContent = "Active";
+                                }
+
+                                tablbeStatus.classList.toggle("active");
+
                             })
                             .catch(error => {
                                 console.error('?ã có l?i x?y ra:', error);
@@ -265,7 +331,25 @@
                     return integerPart;
                 }
 
+                function validateDetails() {
+                    let productName = document.getElementById('pName').value;
+                    let productInfo = document.getElementById('pInfor').value;
+                    let productQuantity = document.getElementById('pQuantity').value;
+                    let productPrice = document.getElementById('pPrice').value.replace(/,/g, '');
+                    let sale = document.getElementById('pSale').value;
+                    let oldImg = document.getElementById('pImage').src;
+                    let newImg = document.getElementById('file-name').src;
+                    if (productName === null || productInfo === null || productQuantity === null ||
+                            productPrice === null || sale === null || (oldImg === null && newImg === null)) {
+                        return false;
+                    }
+                    return true;
+                }
+
                 function updateProduct(productId) {
+                    console.log(validateDetails());
+                    if (!validateDetails())
+                        return;
                     let newCate = document.getElementById('newCate').value;
                     var product = {
                         productId: productId,
@@ -285,10 +369,10 @@
                         method: 'GET'
                     })
                             .then(response => {
-                                if(response.status === 200){
+                                if (response.status === 200) {
                                     window.location.href = './ProductController';
                                 }
-                    })
+                            })
                             .catch(error => {
                                 console.error('Có l?i x?y ra:', error);
                             });
@@ -300,9 +384,33 @@
                         select.removeChild(select.firstChild);
                     }
                 }
+
+                function filterStatus() {
+                    let status = document.getElementById('filter-status').value;
+                    window.location.href = './ProductController?status=' + status;
+                }
+
+                function filterCate() {
+                    let cateId = document.getElementById('filter-cate').value;
+                    window.location.href = './ProductController?cateId=' + cateId;
+                }
             </script>
         </body>
         <script>
+            let url = currentUrl = window.location.href;
+            let listUrlParam = url.split('/');
+            let listParam = listUrlParam[listUrlParam.length - 1].toString().split('?');
+            listParam.forEach(function (param) {
+                if (param.toString().includes('cateId')) {
+                    let cate = param.toString().split('=')[1];
+                    document.getElementById('filter-cate').value = cate;
+                }
+                if (param.toString().includes('status')) {
+                    let status = param.toString().split('=')[1];
+                    document.getElementById('filter-status').value = status;
+                }
+            });
+
             document.getElementById('productDetailModal').addEventListener('click', function (event) {
                 if (event.target === this) {
                     document.getElementById('productDetailModal').style.display = 'none';
@@ -320,7 +428,7 @@
             toggleButton.addEventListener("click", function () {
                 var isActive = toggleButton.classList.contains("active");
                 if (isActive) {
-                    toggleButton.textContent = "Inactive";
+                    toggleButton.textContent = "InActive";
                 } else {
                     toggleButton.textContent = "Active";
                 }

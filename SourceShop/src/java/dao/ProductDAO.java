@@ -58,6 +58,32 @@ public class ProductDAO extends DBcontext {
         return productList;
     }
 
+    public List<Product> getAllProducts(String status) {
+        List<Product> productList = new ArrayList<>();
+        String sql = "SELECT pid, pname, cateId, pinfo, pprice, pquantity, image, status, sale FROM product WHERE status = ?";
+        try ( PreparedStatement statement = connection.prepareStatement(sql);) {
+            statement.setString(1, status);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Product product = new Product();
+                product.setProductId(resultSet.getInt("pid"));
+                product.setProductName(resultSet.getString("pname"));
+                product.setCateId(resultSet.getInt("cateId"));
+                product.setProductInfo(resultSet.getString("pinfo"));
+                product.setProductPrice(resultSet.getDouble("pprice"));
+                product.setProductQuantity(resultSet.getInt("pquantity"));
+                product.setImage(resultSet.getString("image"));
+                product.setStatus(resultSet.getString("status"));
+                product.setSale(resultSet.getDouble("sale"));
+
+                productList.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productList;
+    }
+
     public Product getProductById(int productId) {
         String sql = "SELECT pid, pname, cateId, pinfo, pprice, pquantity, image, status, sale FROM product WHERE pid = ?";
         Product product = new Product();
@@ -143,9 +169,9 @@ public class ProductDAO extends DBcontext {
         }
         int totalProducts = 0;
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
-            int parameterIndex = 1;           
+            int parameterIndex = 1;
             if (key != null) {
-                statement.setString(parameterIndex++, key); 
+                statement.setString(parameterIndex++, key);
                 statement.setString(parameterIndex++, "%" + key + "%");
             }
             if (cateId != 0) {
@@ -217,12 +243,12 @@ public class ProductDAO extends DBcontext {
 
         return products;
     }
-    
+
     public boolean updateProductStatus(int pid, String status) {
         String sql = "UPDATE product SET status=? WHERE pid=?";
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1,status);
-            statement.setInt(2, pid);      
+            statement.setString(1, status);
+            statement.setInt(2, pid);
             int rowsUpdated = statement.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
@@ -310,12 +336,12 @@ public class ProductDAO extends DBcontext {
 //            System.out.println("Failed to add product.");
 //        }
 //
-//        // Test getAllProducts method
-//        List<Product> allProducts = dao.getAllProducts();
-//        System.out.println("All Products:");
-//        for (Product product : allProducts) {
-//            System.out.println(product);
-//        }
+        // Test getAllProducts method
+        List<Product> allProducts = dao.getAllProducts("Active");
+        System.out.println("All Products:");
+        for (Product product : allProducts) {
+            System.out.println(product);
+        }
 //
 //        // Test updateProduct method
 //        if (!allProducts.isEmpty()) {

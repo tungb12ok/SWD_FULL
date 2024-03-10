@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Data
 public class User {
+
     private int userId;
     private String email;
     private String name;
@@ -16,4 +17,5 @@ public class User {
     private int pincode;
     private String password;
     private String status;
+    private int role;
 }

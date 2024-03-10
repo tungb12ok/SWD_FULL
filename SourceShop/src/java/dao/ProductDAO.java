@@ -85,26 +85,29 @@ public class ProductDAO extends DBcontext {
     }
 
     public Product getProductById(int productId) {
+        Product product = null;
         String sql = "SELECT pid, pname, cateId, pinfo, pprice, pquantity, image, status, sale FROM product WHERE pid = ?";
-        Product product = new Product();
+
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, productId);
-            try ( ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    product.setProductId(resultSet.getInt("pid"));
-                    product.setProductName(resultSet.getString("pname"));
-                    product.setCateId(resultSet.getInt("cateId"));
-                    product.setProductInfo(resultSet.getString("pinfo"));
-                    product.setProductPrice(resultSet.getDouble("pprice"));
-                    product.setProductQuantity(resultSet.getInt("pquantity"));
-                    product.setImage(resultSet.getString("image"));
-                    product.setStatus(resultSet.getString("status"));
-                    product.setSale(resultSet.getDouble("sale"));
-                }
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                product = new Product();
+                product.setProductId(resultSet.getInt("pid"));
+                product.setProductName(resultSet.getString("pname"));
+                product.setCateId(resultSet.getInt("cateId"));
+                product.setProductInfo(resultSet.getString("pinfo"));
+                product.setProductPrice(resultSet.getDouble("pprice"));
+                product.setProductQuantity(resultSet.getInt("pquantity"));
+                product.setImage(resultSet.getString("image"));
+                product.setStatus(resultSet.getString("status"));
+                product.setSale(resultSet.getDouble("sale"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return product;
     }
 

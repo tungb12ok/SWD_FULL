@@ -13,13 +13,19 @@ import model.Product;
  * @author tungl
  */
 public class ProductService {
-    public List<Product> getProduct(String status){
-        ProductDAO dao = new ProductDAO();
+
+    ProductDAO dao = new ProductDAO();
+
+    public List<Product> getProduct(String status) {
         return dao.getAllProducts(status);
     }
-    
+
+    public Product getProductById(int id) {
+        return dao.getProductById(id);
+    }
+
     public static void main(String[] args) {
         ProductService ps = new ProductService();
-        System.out.println(ps.getProduct("Active").size());
+        System.out.println(ps.getProductById(2));
     }
 }

@@ -74,6 +74,29 @@ public class UserDAO extends DBcontext {
         }
         return null;
     }
+    
+    public User getUserById(int userId) {
+        String sql = "SELECT userId, email, name, mobile, address, pincode, password, status FROM user WHERE userId = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    User user = new User();
+                    user.setUserId(resultSet.getInt("userId"));
+                    user.setEmail(resultSet.getString("email"));
+                    user.setName(resultSet.getString("name"));
+                    user.setMobile(resultSet.getString("mobile"));
+                    user.setAddress(resultSet.getString("address"));
+                    user.setPincode(resultSet.getInt("pincode"));
+                    user.setPassword(resultSet.getString("password"));
+                    user.setStatus(resultSet.getString("status"));
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+        }
+        return null;
+    }
 
     public boolean updateUser(User user) {
         String sql = "UPDATE [dbo].[user] SET email=?, name=?, mobile=?, address=?, pincode=?, password=?, status=? WHERE userId=?";
@@ -111,6 +134,6 @@ public class UserDAO extends DBcontext {
 
         // Test methods here
         System.out.println("All Users: " + dao.getAllUsers());
-        System.out.println("User by Email: " + dao.getUserByEmail("test@example.com"));
+        System.out.println("User by Email: " + dao.getUserById(1));
     }
 }

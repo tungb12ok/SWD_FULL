@@ -4,6 +4,7 @@
  */
 package model;
 
+import java.sql.Date;
 import lombok.Data;
 
 /**
@@ -16,5 +17,11 @@ public class Order {
     private int userId;
     private double amount;
     private String status;
-    
+    private Date time;
+    private String email;
+    private Date updateTime;
+    private int updateBy;
+    private String address;
+    private String payment;
+    private String mobile;
 }

@@ -12,79 +12,78 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.Cart;
+import model.User;
 
 /**
  *
  * @author tungl
  */
-@WebServlet(name = "CartController", urlPatterns = {"/MyCart"})
+@WebServlet(name = "CartController", urlPatterns = {"/cart"})
 public class CartController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet CartController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet CartController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ProductDAO pDAO = new ProductDAO();
-        request.setAttribute("listP", pDAO.getAllProducts());
-        request.getRequestDispatcher("adminViewProduct.jsp").forward(request, response);
+        HttpSession session = request.getSession();
+        String action = request.getParameter("action");
+        User u = (User) session.getAttribute("user");
+        if (u == null) {
+            request.getRequestDispatcher("login").forward(request, response);
+            return;
+        }
+
+        String pId = request.getParameter("pid");
+        Cart cart = (Cart) session.getAttribute("cart");
+
+        if (cart == null) {
+            cart = new Cart();
+            request.setAttribute("messError", "Cart null");
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+            return;
+        }
+        request.setAttribute("cart", cart);
+        request.getRequestDispatcher("cartDetails.jsp").forward(request, response);
+
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
-    }
+        HttpSession session = request.getSession();
+        String action = request.getParameter("action");
+        User u = (User) session.getAttribute("user");
+        if (u == null) {
+            request.getRequestDispatcher("login").forward(request, response);
+            return;
+        }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+        String pId = request.getParameter("pid");
+        Cart cart = (Cart) session.getAttribute("cart");
+
+        if (cart == null) {
+            cart = new Cart();
+        }
+
+        if (action.equals("addToCart")) {
+            try {
+                cart.addItem(u.getUserId(), Integer.parseInt(pId));
+                request.setAttribute("messSuccess", "Add cart successfuly!");
+            } catch (Exception e) {
+                request.setAttribute("messError", "Add cart failed!");
+            }
+        }
+        if (action.equals("removeFromCart")) {
+            try {
+                cart.removeItem(u.getUserId(), Integer.parseInt(pId));
+                request.setAttribute("messSuccess", "Remove from cart successfuly!");
+            } catch (Exception e) {
+                request.setAttribute("messError", "Remove from cart failed!");
+            }
+        }
+        request.getRequestDispatcher("home").forward(request, response);
+
+    }
 
 }

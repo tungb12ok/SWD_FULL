@@ -21,8 +21,8 @@ import java.util.*;
  *
  * @author win
  */
-@WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
-public class ProductController extends HttpServlet {
+@WebServlet(name = "ProductManagerController", urlPatterns = {"/productManager"})
+public class ProductManagerController extends HttpServlet {
 
     private ProductDAO productDAO = new ProductDAO();
 

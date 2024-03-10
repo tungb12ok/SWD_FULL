@@ -22,6 +22,7 @@
         <div class="text-center" id="message"
              style="color: black; font-size: 14px; font-weight: bold;"></div>
         <!-- Start of Product Items List -->
+        <jsp:include page="/common/Message.jsp" />
 
         <div class="container">
             <div class="row text-center">
@@ -41,17 +42,17 @@
                             </p>
                             <form method="post">
                                 <button type="submit"
-                                        formaction="./AddtoCart?uid=&pid=&pqty=1"
+                                        formaction="./cart?action=addToCart&uid=${user.userId}&pid=${i.productId}"
                                         class="btn btn-success">Add to Cart</button>
                                 &nbsp;&nbsp;&nbsp;
                                 <button type="submit"
-                                        formaction="./AddtoCart?uid=&pid=&pqty=1"
+                                        formaction="./buyNow?action=addToCart&uid=${user.userId}&pid=${i.productId}"
                                         class="btn btn-primary">Buy Now</button>
                                 <button type="submit"
-                                        formaction="./AddtoCart?uid=&pid=&pqty=0"
+                                        formaction="./cart?action=removeFromCart&uid=${user.userId}&pid=${i.productId}"
                                         class="btn btn-danger">Remove From Cart</button>
                                 &nbsp;&nbsp;&nbsp;
-                                <button type="submit" formaction="cartDetails.jsp"
+                                <button type="submit" formaction="checkout"
                                         class="btn btn-success">Checkout</button>
                             </form>
                             <br />

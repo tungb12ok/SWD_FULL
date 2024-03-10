@@ -4,6 +4,8 @@
  */
 package controller;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import common.OrderResponse;
 import dao.*;
 import java.io.IOException;
@@ -65,41 +67,59 @@ public class OrderListController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         UserDAO udao = new UserDAO();
+        String status = request.getParameter("status");
+        System.out.println(status);
         List<Order> listO = orderDao.getAllOrders();
-        List<OrderResponse> listOR = new ArrayList<OrderResponse>();
-        for (Order order : listO) {
-            List<OrderDetail> listOd = orderDetailDAO.getOrderDetailsByOrderId(order.getOrderId());
-            double total = 0;
-            OrderResponse oR = new OrderResponse(order);
-            User cus = udao.getUserById(order.getUserId());
-            User sale = udao.getUserById(order.getUpdateBy());
-            if (cus != null) {
-                oR.setReceiver(cus.getName());
+        List<Order> listAfter = new ArrayList<>();
+        if (status != null) {
+            for (Order order : listO) {
+                if (order.getStatus().equals(status)) {
+                   listAfter.add(order);
+                }
+                continue;
             }
-            if (sale != null) {
-                oR.setSaler(sale.getName());
-            }
-            for (OrderDetail od : listOd) {
-                total += od.getAmount() * od.getQuantity();
-            }
-            oR.setTotal(total);
-            listOR.add(oR);
         }
-        String pageRaw = request.getParameter("page");
-        int pageNumber = 1;
-        if (pageRaw != null) {
-            pageNumber = Integer.parseInt(pageRaw);
+        System.out.println(listO);
+        if (listAfter.size() == 0) {
+            request.setAttribute("pageNumber", 1);
+            request.setAttribute("totalPages", 0);
+            request.setAttribute("listO", null);
+        } else {
+            List<OrderResponse> listOR = new ArrayList<OrderResponse>();
+            for (Order order : listAfter) {
+                List<OrderDetail> listOd = orderDetailDAO.getOrderDetailsByOrderId(order.getOrderId());
+                double total = 0;
+                OrderResponse oR = new OrderResponse(order);
+                User cus = udao.getUserById(order.getUserId());
+                User sale = udao.getUserById(order.getUpdateBy());
+                if (cus != null) {
+                    oR.setReceiver(cus.getName());
+                }
+                if (sale != null) {
+                    oR.setSaler(sale.getName());
+                }
+                for (OrderDetail od : listOd) {
+                    total += od.getAmount() * od.getQuantity();
+                }
+                oR.setTotal(total);
+                listOR.add(oR);
+            }
+            String pageRaw = request.getParameter("page");
+            int pageNumber = 1;
+            if (pageRaw != null) {
+                pageNumber = Integer.parseInt(pageRaw);
 
+            }
+            int pageSize = 10;
+            int totalProducts = listOR.size();
+            int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+            int startIndex = (pageNumber - 1) * pageSize;
+            System.out.println(listOR);
+            List<OrderResponse> list = listOR.subList(startIndex, Math.min(startIndex + pageSize, totalProducts));
+            request.setAttribute("pageNumber", pageNumber);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("listO", list);
         }
-        int pageSize = 10;
-        int totalProducts = listOR.size();
-        int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
-        int startIndex = (pageNumber - 1) * pageSize;
-        System.out.println(listOR);
-        List<OrderResponse> list = listOR.subList(startIndex, Math.min(startIndex + pageSize, totalProducts));
-        request.setAttribute("pageNumber", pageNumber);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("listO", list);
         request.getRequestDispatcher("OrderList.jsp").forward(request, response);
     }
 
@@ -114,7 +134,24 @@ public class OrderListController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        ProductDAO pd = new ProductDAO();
+        String soId = request.getParameter("orderId");
+        Order od = orderDao.getOrderById(soId);
+        List<OrderDetail> listO = orderDetailDAO.getOrderDetailsByOrderId(od.getOrderId());
+        Map<String, Product> mapP = new HashMap<>();
+        for (OrderDetail odd : listO) {
+            Product p = pd.getProductById(odd.getProductId());
+            mapP.put(odd.getOrderDetailId(), p);
+        }
+        Gson gson = new Gson();
+        JsonObject responseData = new JsonObject();
+        responseData.addProperty("map", gson.toJson(mapP));
+        responseData.addProperty("list", gson.toJson(listO));
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print(responseData.toString());
+        out.flush();
     }
 
     /**

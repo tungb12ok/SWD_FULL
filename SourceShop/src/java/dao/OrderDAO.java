@@ -54,7 +54,7 @@ public class OrderDAO extends DBcontext {
     }
 
     public Order getOrderById(String orderId) {
-        String sql = "SELECT orderid, userId, amount, status FROM [dbo].[orders] WHERE orderid = ?";
+        String sql = "SELECT orderid, userId, amount, status, time, email, updateTime, updateBy, address, payment, mobile FROM orders WHERE orderid like ?";
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, orderId);
             try ( ResultSet resultSet = statement.executeQuery()) {
@@ -64,6 +64,13 @@ public class OrderDAO extends DBcontext {
                     order.setUserId(resultSet.getInt("userId"));
                     order.setAmount(resultSet.getDouble("amount"));
                     order.setStatus(resultSet.getString("status"));
+                    order.setTime(resultSet.getDate("time"));
+                    order.setEmail(resultSet.getString("email"));
+                    order.setUpdateTime(resultSet.getDate("updateTime"));
+                    order.setUpdateBy(resultSet.getInt("updateBy"));
+                    order.setAddress(resultSet.getString("address"));
+                    order.setPayment(resultSet.getString("payment"));
+                    order.setMobile(resultSet.getString("mobile"));
                     return order;
                 }
             }

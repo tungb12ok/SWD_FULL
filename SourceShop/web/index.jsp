@@ -29,36 +29,29 @@
                 <c:forEach var="i" items="${list}">
                     <div class="col-sm-4" style='height: 350px;'>
                         <div class="thumbnail">
-                            <img   src="${i.image}" alt="Product"
-                                   style="height: 150px; max-width: 180px">
-                            <p class="productname">
-                                ${i.productName}
-                            </p>
-                            <p class="productinfo">
-                                ${i.productInfo}
-                            </p>
-                            <p class="price">
-                                ${i.productPrice}
-                            </p>
-                            <form method="post">
-                                <button type="submit"
-                                        formaction="./cart?action=addToCart&uid=${user.userId}&pid=${i.productId}"
-                                        class="btn btn-success">Add to Cart</button>
+                            <img src="${i.image}" alt="Product" style="height: 150px; max-width: 180px">
+                            <p class="productname">${i.productName}</p>
+                            <p class="productinfo">${i.productInfo}</p>
+                            <p class="price">${i.productPrice}</p>
+                            <form method="post" action="./cart">
+                                <input type="hidden" name="uid" value="${user.userId}">
+                                <input type="hidden" name="pid" value="${i.productId}">
+
+                                <button type="submit" name="action" value="addToCart" class="btn btn-success">Add to Cart</button>
                                 &nbsp;&nbsp;&nbsp;
-                                <button type="submit"
-                                        formaction="./buyNow?action=addToCart&uid=${user.userId}&pid=${i.productId}"
-                                        class="btn btn-primary">Buy Now</button>
-                                <button type="submit"
-                                        formaction="./cart?action=removeFromCart&uid=${user.userId}&pid=${i.productId}"
-                                        class="btn btn-danger">Remove From Cart</button>
+
+                                <button type="submit" name="action" value="buyNow" class="btn btn-primary">Buy Now</button>
+
+                                <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
                                 &nbsp;&nbsp;&nbsp;
-                                <button type="submit" formaction="checkout"
-                                        class="btn btn-success">Checkout</button>
+
+                                <button type="submit" name="action" value="checkout" class="btn btn-success">Checkout</button>
                             </form>
                             <br />
                         </div>
                     </div>
                 </c:forEach>
+
 
             </div>
         </div>

@@ -43,15 +43,6 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12 form-group">
-                            <label for="userrole">Login As</label> <select name="usertype"
-                                                                           id="userrole" class="form-control" required>
-                                <option value="2" selected>CUSTOMER</option>
-                                <option value="1">ADMIN</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-12 text-center">
                             <button type="submit" class="btn btn-success">Login</button>
                         </div>

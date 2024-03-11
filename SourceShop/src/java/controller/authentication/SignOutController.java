@@ -20,11 +20,11 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "SignInController", urlPatterns = {"/signOut"})
 public class SignOutController extends HttpServlet {
 
-   
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        request.getSession().setAttribute("user", null);
+        response.sendRedirect("home");
     }
 
     @Override
@@ -32,6 +32,5 @@ public class SignOutController extends HttpServlet {
             throws ServletException, IOException {
 
     }
-
 
 }

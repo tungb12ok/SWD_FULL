@@ -123,7 +123,7 @@
             <p>Total Amount: ${cart.calculateTotalAmount()}</p>
         </div>
 
-        <%@ include file="footer.html"%>
+        <%@ include file="footer.jsp"%>
         <script>
             // Filter functionality
             document.getElementById("searchInput").addEventListener("keyup", function () {

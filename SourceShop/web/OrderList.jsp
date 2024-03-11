@@ -8,7 +8,6 @@
 <%@page import="model.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="com.shashi.service.impl.*, com.shashi.service.*,com.shashi.beans.*,java.util.*,java.io.*"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -137,7 +136,7 @@
                 </div>
             </div>
         </div>
-        <%@ include file="footer.html"%>
+        <%@ include file="footer.jsp"%>
     </body>
     <script>
         let url = currentUrl = window.location.href;

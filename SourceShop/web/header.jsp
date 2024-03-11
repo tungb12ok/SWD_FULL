@@ -33,17 +33,14 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Category <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="home?type=mobile">Mobiles</a></li>
-                                <li><a href="home?type=tv">TVs</a></li>
-                                <li><a href="home?type=laptop">Laptops</a></li>
-                                <li><a href="home?type=camera">Camera</a></li>
-                                <li><a href="home?type=speaker">Speakers</a></li>
-                                <li><a href="home?type=tablet">Tablets</a></li>
+                                <c:forEach var="i" items="${listCate}">
+                                    <li><a href="home?type=${i.cateId}">${i.name}</a></li>
+                                    </c:forEach>
                             </ul>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="cart"><i class="fa fa-shopping-cart"></i> Cart <span class="badge">${sessionScope.cart.items.size()}</span></a></li>
+                        <li><a href="cart"><i class="fa fa-shopping-cart"></i> Cart <span class="badge">${sessionScope.cart.getProductCountByUserId(user.userId)}</span></a></li>
                                 <c:choose>
                                     <c:when test="${user == null}">
                                 <li><a href="signIn">Login</a></li>

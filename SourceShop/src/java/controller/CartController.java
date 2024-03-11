@@ -32,7 +32,7 @@ public class CartController extends HttpServlet {
         ProductService ps = new ProductService();
         User u = (User) session.getAttribute("user");
         if (u == null) {
-            request.getRequestDispatcher("login").forward(request, response);
+            request.getRequestDispatcher("signIn").forward(request, response);
             return;
         }
 
@@ -60,13 +60,12 @@ public class CartController extends HttpServlet {
 
         User u = (User) session.getAttribute("user");
         if (u == null) {
-            request.getRequestDispatcher("login").forward(request, response);
+            request.getRequestDispatcher("signIn").forward(request, response);
             return;
         }
 
         String pId = request.getParameter("pid");
         Cart cart = (Cart) session.getAttribute("cart");
-
         if (cart == null) {
             cart = new Cart();
         }

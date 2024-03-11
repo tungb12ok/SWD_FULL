@@ -93,6 +93,14 @@ public class Cart {
         }
     }
 
+    public int getProductCountByUserId(int userId) {
+        Map<Integer, Integer> userCart = items.get(userId);
+        if (userCart != null) {
+            return userCart.size(); // Trả về số lượng sản phẩm khác nhau trong giỏ hàng
+        }
+        return 0; // Nếu không có giỏ hàng cho người dùng này, trả về 0
+    }
+
     public boolean containsProduct(int userId, int productId) {
         if (items.containsKey(userId)) { // Kiểm tra xem giỏ hàng có chứa userId
             Map<Integer, Integer> userCart = items.get(userId); // Lấy giỏ hàng của userId

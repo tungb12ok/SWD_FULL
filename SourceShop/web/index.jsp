@@ -9,10 +9,6 @@
         <link rel="stylesheet"
               href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/changes.css">
-        <script
-        src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script
-        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     </head>
     <body style="background-color: #E6F9E6;">
         <jsp:include page="header.jsp" />
@@ -55,10 +51,8 @@
 
             </div>
         </div>
-        <!-- ENd of Product Items List -->
-
-
-        <%@ include file="footer.html"%>
+        <!-- ENd of Product Items List --
+        <%@ include file="footer.jsp"%>
 
     </body>
 </html>

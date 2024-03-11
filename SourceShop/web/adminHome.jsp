@@ -207,7 +207,7 @@
                 </div>
             </div>
 
-            <%@ include file="footer.html"%>
+            <%@ include file="footer.jsp"%>
             <script>
                 function getProductPage(page) {
                     let url = window.location.href;
@@ -269,7 +269,7 @@
                                 if (!response.ok) {
                                     throw new Error('Network response was not ok');
                                 }
-                                var tablbeStatus = document.getElementById("table-status-"+pid);
+                                var tablbeStatus = document.getElementById("table-status-" + pid);
 
 
                                 var isActive = tablbeStatus.classList.contains("active");

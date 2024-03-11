@@ -87,7 +87,7 @@
         </div>
 
 
-        <%@ include file="footer.html"%>
+        <%@ include file="footer.jsp"%>
         <script>
             function validateForm() {
                 var username = document.forms["registrationForm"]["username"].value;

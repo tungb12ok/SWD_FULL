@@ -8,6 +8,7 @@ public class Cart {
 
     private Map<Integer, Map<Integer, Integer>> items;
     ProductDAO dao = new ProductDAO();
+
     public Cart() {
         this.items = new HashMap<>();
     }
@@ -90,6 +91,14 @@ public class Cart {
             Map<Integer, Integer> userCart = items.get(userId);
             userCart.put(productId, newQuantity);
         }
+    }
+
+    public boolean containsProduct(int userId, int productId) {
+        if (items.containsKey(userId)) { // Kiểm tra xem giỏ hàng có chứa userId
+            Map<Integer, Integer> userCart = items.get(userId); // Lấy giỏ hàng của userId
+            return userCart.containsKey(productId); // Kiểm tra xem giỏ hàng của người dùng có chứa productId
+        }
+        return false; // Nếu userId không tồn tại trong giỏ hàng, trả về false
     }
 
     public void removeItem(int userId, int productId) {

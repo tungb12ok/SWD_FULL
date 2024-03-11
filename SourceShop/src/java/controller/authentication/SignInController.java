@@ -20,7 +20,7 @@ import model.User;
  *
  * @author tungl
  */
-@WebServlet(name = "SignInController", urlPatterns = {"/singIn"})
+@WebServlet(name = "SignInController", urlPatterns = {"/signIn"})
 public class SignInController extends HttpServlet {
 
     @Override
@@ -46,14 +46,15 @@ public class SignInController extends HttpServlet {
             } else {
                 session.setAttribute("user", u);
                 session.setAttribute("messSuccess", "Login successfuly!");
-                session.setAttribute("messError", "Access denied!");
                 if (!usertype.equals(u.getRole() + "")) {
+                    session.setAttribute("messError", "Access denied!");
                     request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
                 }
                 response.sendRedirect("home");
                 return;
             }
-        } catch (Exception e) {
+        } catch (Exception e) { 
             session.setAttribute("messError", "Error in processing login!");
         }
         request.getRequestDispatcher("login.jsp").forward(request, response);

@@ -24,8 +24,8 @@ public class HomeController extends HttpServlet {
             throws ServletException, IOException {
         ProductService ps = new ProductService();
         User u = new User();
-        u.setUserId(1);
-        request.getSession().setAttribute("user", u);
+//        u.setUserId(1);
+//        request.getSession().setAttribute("user", u);
         request.setAttribute("list", ps.getProduct("Active"));
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }

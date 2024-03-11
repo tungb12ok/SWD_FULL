@@ -21,7 +21,7 @@
         <div class="container">
             <div class="row"
                  style="margin-top: 5px; margin-left: 2px; margin-right: 2px;">
-                <form action="singIn" method="post"
+                <form action="signIn" method="post"
                       class="col-md-4 col-md-offset-4 col-sm-8 col-sm-offset-2"
                       style="border: 2px solid black; border-radius: 10px; background-color: #FFE5CC; padding: 10px;">
                     <div style="font-weight: bold;" class="text-center">

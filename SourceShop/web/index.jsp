@@ -40,11 +40,12 @@
                                 &nbsp;&nbsp;&nbsp;
 
                                 <button type="submit" name="action" value="buyNow" class="btn btn-primary">Buy Now</button>
-
-                                <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
+                                <c:if test="${cart.containsProduct(user.userId, i.productId)}">
+                                    <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
+                                </c:if>
                                 &nbsp;&nbsp;&nbsp;
 
-                                <button type="submit" name="action" value="checkout" class="btn btn-success">Checkout</button>
+                                <button type="submit" name="action" value="checkout" class="btn btn-success">Pay Now</button>
                             </form>
                             <br />
                         </div>

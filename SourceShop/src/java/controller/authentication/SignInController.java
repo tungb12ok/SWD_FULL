@@ -34,7 +34,6 @@ public class SignInController extends HttpServlet {
             throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String usertype = request.getParameter("usertype");
         HttpSession session = request.getSession();
 
         UserDAO dao = new UserDAO();
@@ -46,9 +45,8 @@ public class SignInController extends HttpServlet {
             } else {
                 session.setAttribute("user", u);
                 session.setAttribute("messSuccess", "Login successfuly!");
-                if (!usertype.equals(u.getRole() + "")) {
-                    session.setAttribute("messError", "Access denied!");
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                if(u.getRole() == 1){
+                    response.sendRedirect("ProductController");
                     return;
                 }
                 response.sendRedirect("home");

@@ -34,8 +34,6 @@
 
                                 <button type="submit" name="action" value="addToCart" class="btn btn-success">Add to Cart</button>
                                 &nbsp;&nbsp;&nbsp;
-
-                                <button type="submit" name="action" value="buyNow" class="btn btn-primary">Buy Now</button>
                                 <c:if test="${cart.containsProduct(user.userId, i.productId)}">
                                     <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
                                 </c:if>

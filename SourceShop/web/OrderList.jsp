@@ -30,7 +30,7 @@
             int totalPages = (int)request.getAttribute("totalPages");
         %>
         <jsp:include page="header.jsp" />
-        <div class="filter" style="padding-top: 20px; padding-bottom: 20px;">
+        <div class="filter" style="padding-top: 20px; padding-bottom: 20px; display: flex;">
             <div style="display: flex; padding-left: 50px;">
                 <label style="padding: 10px 20px 0 0;">Status:</label>    
                 <select  class="form-control" id="filter-status" style="width: 200px; height: 50px;text-align: center;" onchange="filterStatus()">
@@ -39,6 +39,16 @@
                     <option value="Cancelled">Cancelled</option>
                     <option value="Paid">Paid</option>
                     <option value="Shipped">Shipped</option>
+                </select>
+            </div>
+
+            <div style="display: flex; padding-left: 50px;">
+                <label style="padding: 10px 20px 0 0;">Saler:</label>    
+                <select  class="form-control" id="filter-admin" style="width: 200px; height: 50px;text-align: center;" onchange="filterAdmin()">
+                    <option value="">-- Select Saler --</option>
+                    <c:forEach var="ad" items="${admins}">
+                        <option value="${ad.userId}">${ad.name}</option>
+                    </c:forEach>
                 </select>
             </div>
 
@@ -93,7 +103,7 @@
                for (int i = 1; i <= totalPages; i++) {
                    String cssClass = (i == pageNumber) ? "active" : "";
             %>
-            <li onclick="getProductPage(<%= i %>)"class="<%= cssClass %>"><a style="cursor: pointer;"><%= i %></a></li>
+            <li onclick="getOrderPage(<%= i %>)"class="<%= cssClass %>"><a style="cursor: pointer;"><%= i %></a></li>
                 <% } %>
         </ul>
 
@@ -134,13 +144,27 @@
         let listUrlParam = url.split('/');
         let listParam = listUrlParam[listUrlParam.length - 1].toString().split('?');
         listParam.forEach(function (param) {
-            if (param.toString().includes('cateId')) {
-                let cate = param.toString().split('=')[1];
-                document.getElementById('filter-cate').value = cate;
-            }
-            if (param.toString().includes('status')) {
-                let status = param.toString().split('=')[1];
-                document.getElementById('filter-status').value = status;
+            if (param.toString().includes('&')) {
+                let urlSe = param.toString().split('&');
+                urlSe.forEach(function (u) {
+                    if (u.toString().includes('admin')) {
+                        let cate = u.toString().split('=')[1];
+                        document.getElementById('filter-admin').value = cate;
+                    }
+                    if (u.toString().includes('status')) {
+                        let status = u.toString().split('=')[1];
+                        document.getElementById('filter-status').value = status;
+                    }
+                })
+            } else {
+                if (param.toString().includes('admin')) {
+                    let cate = param.toString().split('=')[1];
+                    document.getElementById('filter-admin').value = cate;
+                }
+                if (param.toString().includes('status')) {
+                    let status = param.toString().split('=')[1];
+                    document.getElementById('filter-status').value = status;
+                }
             }
         });
 
@@ -215,10 +239,25 @@
             console.log(id);
             document.getElementById('productDetailModal').style.display = 'block';
         }
-        
-        function filterStatus(){
+
+        function filterStatus() {
             let status = document.getElementById('filter-status').value;
-            window.location.href = './order-list?status=' +status;
+            window.location.href = './order-list?status=' + status;
+        }
+
+        function filterAdmin() {
+            let admin = document.getElementById('filter-admin').value;
+            window.location.href = './order-list?admin=' + admin;
+        }
+
+        function getOrderPage(page) {
+            let url = window.location.href;
+            if (url.includes('page')) {
+                url = url.replace(/page=\d+/g, 'page=' + page);
+            } else {
+                url += (url.includes('?') ? '&' : '?') + 'page=' + page;
+            }
+            window.location.href = url;
         }
     </script>
 </html>

@@ -74,12 +74,22 @@ public class OrderListController extends HttpServlet {
         if (status != null) {
             for (Order order : listO) {
                 if (order.getStatus().equals(status)) {
-                   listAfter.add(order);
+                    listAfter.add(order);
                 }
                 continue;
             }
         }
-        System.out.println(listO);
+        String admin = request.getParameter("admin");
+        if (admin != null) {
+            int adminId = Integer.parseInt(admin);
+            for (Order order : listO) {
+                if (order.getUpdateBy() == adminId) {
+                    listAfter.add(order);
+                }
+                continue;
+            }
+        }
+        List<User> listAdmin = udao.getAllUsersNameByRole(1);
         if (listAfter.size() == 0) {
             request.setAttribute("pageNumber", 1);
             request.setAttribute("totalPages", 0);
@@ -120,6 +130,7 @@ public class OrderListController extends HttpServlet {
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("listO", list);
         }
+        request.setAttribute("admins", listAdmin);
         request.getRequestDispatcher("OrderList.jsp").forward(request, response);
     }
 

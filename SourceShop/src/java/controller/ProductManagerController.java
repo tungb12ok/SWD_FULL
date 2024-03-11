@@ -21,7 +21,7 @@ import java.util.*;
  *
  * @author win
  */
-@WebServlet(name = "ProductManagerController", urlPatterns = {"/productManager"})
+@WebServlet(name = "ProductManagerController", urlPatterns = {"/ProductController"})
 public class ProductManagerController extends HttpServlet {
 
     private ProductDAO productDAO = new ProductDAO();
@@ -118,8 +118,7 @@ public class ProductManagerController extends HttpServlet {
             if (sPid != null) {
                 int pid = Integer.parseInt(sPid);
                 Product p = productDAO.getProductById(pid);
-                List<Categories> listCate = productDAO.getAllCategories();
-                if (p != null) {
+                List<Categories> listCate = productDAO.getAllCategories();   
                     Gson gson = new Gson();
                     JsonObject responseData = new JsonObject();
                     responseData.addProperty("product", gson.toJson(p));
@@ -128,8 +127,7 @@ public class ProductManagerController extends HttpServlet {
                     response.setCharacterEncoding("UTF-8");
                     PrintWriter out = response.getWriter();
                     out.print(responseData.toString());
-                    out.flush();
-                }
+                    out.flush();              
             }
         }
     }

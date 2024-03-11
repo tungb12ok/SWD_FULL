@@ -359,7 +359,7 @@
                         productPrice: document.getElementById('pPrice').value.replace(/,/g, ''),
                         sale: document.getElementById('pSale').value,
                         status: document.getElementById('pStatus').textContent,
-                        image: document.getElementById('file-name').src !== "http://localhost:9999/SourceShop/productManager" ? document.getElementById('file-name').src : document.getElementById('pImage').src,
+                        image: document.getElementById('file-name').src !== "http://localhost:9999/SourceShop/ProductController" ? document.getElementById('file-name').src : document.getElementById('pImage').src,
                         categoryId: newCate === "" ? document.getElementById('cateid').value + ";old" : newCate + ";new"
                     };
                     var queryParams = new URLSearchParams();
@@ -370,7 +370,7 @@
                     })
                             .then(response => {
                                 if (response.status === 200) {
-                                    window.location.href = './productManager';
+                                    window.location.href = './ProductController';
                                 }
                             })
                             .catch(error => {
@@ -387,12 +387,12 @@
 
                 function filterStatus() {
                     let status = document.getElementById('filter-status').value;
-                    window.location.href = './productManager?status=' + status;
+                    window.location.href = './ProductController?status=' + status;
                 }
 
                 function filterCate() {
                     let cateId = document.getElementById('filter-cate').value;
-                    window.location.href = './productManager?cateId=' + cateId;
+                    window.location.href = './ProductController?cateId=' + cateId;
                 }
             </script>
         </body>

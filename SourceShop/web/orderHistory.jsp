@@ -34,10 +34,9 @@
                 <label style="padding: 10px 20px 0 0;">Status:</label>    
                 <select  class="form-control" id="filter-status" style="width: 200px; height: 50px;text-align: center;" onchange="filterStatus()">
                     <option value="">-- Select Status --</option>
-                    <option value="New">New</option>
-                    <option value="Cancelled">Cancelled</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Shipped">Shipped</option>
+                    <c:forEach var="s" items="${status}">
+                        <option value="${s.id}">${s.name}</option>
+                    </c:forEach>
                 </select>
             </div>           
 
@@ -75,13 +74,21 @@
                         <td>${o.email}</td>
                         <td>${o.address}</td>                      
                         <td>
-                            <div class="action-status active" id="table-status-${o.orderId}" onclick="changeStatus(${o.orderId})">${o.status}</div>   
+                            <c:forEach var="st" items="${status}">
+                                <c:if test="${st.id == o.status}">
+                                    <div class="action-status active" id="table-status-${o.orderId}" onclick="changeStatus(${o.orderId})">${st.name}</div> 
+                                </c:if>
+                            </c:forEach>
+
                         </td>
                         <td>
                             <button id="openModalBtn" onclick="openModalOrder('${o.orderId}', '${o.saler}', '${o.status}')">Details</button>
-                            <c:if test="${o.status == 'New'}">
-                                <button style="background: linear-gradient(rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.5)), #000;" onclick="cancelOrder('${o.orderId}')">Cancel</button>
-                            </c:if>
+                            <c:forEach var="st" items="${status}">
+                                <c:if test="${st.name == 'New' && st.id == o.status}">
+                                    <button style="background: linear-gradient(rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.5)), #000;" onclick="cancelOrder('${o.orderId}')">Cancel</button>
+                                </c:if>
+                            </c:forEach>
+
                         </td>
                     </tr>
                 </c:forEach>
@@ -146,7 +153,7 @@
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
                         }
-                        window.location.href='./order-history'
+                        window.location.href = './order-history'
                     })
                     .catch(error => {
                         console.error('?ã có l?i x?y ra:', error);

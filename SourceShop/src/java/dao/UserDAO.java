@@ -19,7 +19,7 @@ public class UserDAO extends DBcontext {
             statement.setString(4, user.getAddress());
             statement.setInt(5, user.getPincode());
             statement.setString(6, user.getPassword());
-            statement.setString(7, user.getStatus());
+            statement.setInt(7, user.getStatus());
             statement.setInt(8, user.getRole());
 
             int rowsInserted = statement.executeUpdate();
@@ -43,7 +43,7 @@ public class UserDAO extends DBcontext {
                 user.setAddress(resultSet.getString("address"));
                 user.setPincode(resultSet.getInt("pincode"));
                 user.setPassword(resultSet.getString("password"));
-                user.setStatus(resultSet.getString("status"));
+                user.setStatus(resultSet.getInt("status"));
                 userList.add(user);
             }
         } catch (SQLException e) {
@@ -83,7 +83,7 @@ public class UserDAO extends DBcontext {
                     user.setAddress(resultSet.getString("address"));
                     user.setPincode(resultSet.getInt("pincode"));
                     user.setPassword(resultSet.getString("password"));
-                    user.setStatus(resultSet.getString("status"));
+                    user.setStatus(resultSet.getInt("status"));
                     return user;
                 }
             }
@@ -106,7 +106,7 @@ public class UserDAO extends DBcontext {
             statement.setString(4, user.getAddress());
             statement.setInt(5, user.getPincode());
             statement.setString(6, user.getPassword());
-            statement.setString(7, user.getStatus());
+            statement.setInt(7, user.getStatus());
             statement.setInt(8, user.getRole());
             statement.setInt(9, user.getUserId());
             int rowsUpdated = statement.executeUpdate();
@@ -132,7 +132,7 @@ public class UserDAO extends DBcontext {
                     user.setAddress(resultSet.getString("address"));
                     user.setPincode(resultSet.getInt("pincode"));
                     user.setPassword(resultSet.getString("password"));
-                    user.setStatus(resultSet.getString("status"));
+                    user.setStatus(resultSet.getInt("status"));
                     user.setRole(resultSet.getInt("role"));
                 }
             }
@@ -171,7 +171,7 @@ public class UserDAO extends DBcontext {
                     user.setAddress(resultSet.getString("address"));
                     user.setPincode(resultSet.getInt("pincode"));
                     user.setPassword(resultSet.getString("password"));
-                    user.setStatus(resultSet.getString("status"));
+                    user.setStatus(resultSet.getInt("status"));
                     user.setRole(resultSet.getInt("role"));
                 }
             }
@@ -195,7 +195,7 @@ public class UserDAO extends DBcontext {
         newUser.setAddress("123 New Street");
         newUser.setPincode(12345);
         newUser.setPassword("password");
-        newUser.setStatus("active");
+        newUser.setStatus(12);
         newUser.setRole(1);
 
         // Thêm người dùng mới vào cơ sở dữ liệu

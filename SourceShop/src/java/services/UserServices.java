@@ -39,7 +39,7 @@ public class UserServices {
         if (u.getPassword() == null || u.getPassword().length() < 6) {
             throw new IllegalArgumentException("Password must be at least 6 characters long.");
         }
-        if (u.getStatus() == null || u.getStatus().isEmpty()) {
+        if (u.getStatus() == 0) {
             throw new IllegalArgumentException("Status is required.");
         }
         try {

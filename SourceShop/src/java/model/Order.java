@@ -16,7 +16,7 @@ public class Order {
     private String orderId;
     private int userId;
     private double amount;
-    private String status;
+    private int status;
     private Date time;
     private String email;
     private Date updateTime;

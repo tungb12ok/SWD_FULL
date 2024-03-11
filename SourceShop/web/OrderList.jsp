@@ -18,7 +18,7 @@
               href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/changes.css">
         <script
-        
+
         src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="css/styleAdminProduct.css">
     </head>
@@ -33,10 +33,9 @@
                 <label style="padding: 10px 20px 0 0;">Status:</label>    
                 <select  class="form-control" id="filter-status" style="width: 200px; height: 50px;text-align: center;" onchange="filterStatus()">
                     <option value="">-- Select Status --</option>
-                    <option value="New">New</option>
-                    <option value="Cancelled">Cancelled</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Shipped">Shipped</option>
+                    <c:forEach var="s" items="${status}">
+                        <option value="${s.id}">${s.name}</option>
+                    </c:forEach>
                 </select>
             </div>
 
@@ -85,7 +84,12 @@
                         <td>${o.address}</td>
                         <td>${o.saler}</td>
                         <td>
-                            <div class="action-status active" id="table-status-${o.orderId}" onclick="changeStatus(${o.orderId})">${o.status}</div>   
+                            <c:forEach var="st" items="${status}">
+                                <c:if test="${st.id == o.status}">
+                                    <div class="action-status active" id="table-status-${o.orderId}" onclick="changeStatus(${o.orderId})">${st.name}</div> 
+                                </c:if>
+                            </c:forEach>
+
                         </td>
                         <td>
                             <button id="openModalBtn" onclick="openModalOrder('${o.orderId}', '${o.saler}', '${o.status}')">Details</button>
@@ -153,7 +157,7 @@
                         let status = u.toString().split('=')[1];
                         document.getElementById('filter-status').value = status;
                     }
-                })
+                });
             } else {
                 if (param.toString().includes('admin')) {
                     let cate = param.toString().split('=')[1];
@@ -169,11 +173,19 @@
         document.getElementById('productDetailModal').addEventListener('click', function (event) {
             if (event.target === this) {
                 document.getElementById('productDetailModal').style.display = 'none';
+                var table = document.getElementById("cartTable");
+                while (table.rows.length > 1) {
+                    table.deleteRow(1);
+                }
             }
         });
 
         document.getElementsByClassName('close')[0].addEventListener('click', function () {
             document.getElementById('productDetailModal').style.display = 'none';
+            var table = document.getElementById("cartTable");
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
         });
 
         function openModalOrder(id, saler, status) {
@@ -192,12 +204,10 @@
                     .then(data => {
                         var map = JSON.parse(data.map);
                         var list = JSON.parse(data.list);
-
+                        var mapS = JSON.parse(data.mapS);
                         list.forEach(function (od) {
                             var oid = od.orderDetailId.toString();
                             var p = map[oid];
-                            console.log(od);
-                            console.log(p)
                             var tr = document.createElement("tr");
                             // Tạo và thêm các ô dữ liệu vào hàng
                             var td1 = document.createElement("td");
@@ -220,7 +230,7 @@
                             td5.textContent = saler;
                             tr.appendChild(td5);
                             var td6 = document.createElement("td");
-                            td6.textContent = status;
+                            td6.textContent = mapS[status];
                             tr.appendChild(td6);
 
                             var td7 = document.createElement("td");

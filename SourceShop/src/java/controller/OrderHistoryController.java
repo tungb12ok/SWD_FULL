@@ -7,6 +7,7 @@ package controller;
 import common.OrderResponse;
 import dao.OrderDAO;
 import dao.OrderDetailDAO;
+import dao.SettingDAO;
 import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Order;
 import model.OrderDetail;
+import model.Setting;
 import model.User;
 
 /**
@@ -31,6 +33,7 @@ public class OrderHistoryController extends HttpServlet {
 
     private OrderDAO orderDao = new OrderDAO();
     private OrderDetailDAO orderDetailDAO = new OrderDetailDAO();
+    private SettingDAO sd = new SettingDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -76,12 +79,14 @@ public class OrderHistoryController extends HttpServlet {
 //            request.getRequestDispatcher("orderHistory.jsp").forward(request, response);
 //        } else {
         UserDAO udao = new UserDAO();
-        String status = request.getParameter("status");
+        String sStatus = request.getParameter("status");
         List<Order> listO = orderDao.getAllOrdersByUserId(user.getUserId());
         List<Order> listAfter = new ArrayList<>();
-        if (status != null) {
+        if(sStatus == "") sStatus = null;
+        if (sStatus != null) {
+            int status = Integer.parseInt(sStatus);
             for (Order order : listO) {
-                if (order.getStatus().equals(status)) {
+                if (order.getStatus() == status) {
                     listAfter.add(order);
                 }
                 continue;
@@ -130,6 +135,8 @@ public class OrderHistoryController extends HttpServlet {
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("listO", list);
         }
+        List<Setting> list = sd.getSettingByType("Status");
+        request.setAttribute("status", list);
         request.setAttribute("admins", listAdmin);
         request.getRequestDispatcher("orderHistory.jsp").forward(request, response);
 //        }
@@ -148,7 +155,12 @@ public class OrderHistoryController extends HttpServlet {
             throws ServletException, IOException {
         UserDAO udao = new UserDAO();
         String orderId = request.getParameter("orderId");
-        orderDao.updateOrderStatus(orderId, "Cancelled");
+        List<Setting> list = sd.getSettingByType("Status");
+        int status = 0;
+        for(Setting s : list){
+            if(s.getName().equals("Cancelled")) status = s.getId();
+        }
+        orderDao.updateOrderStatus(orderId, status);
 //        List<Order> listO = orderDao.getAllOrders();
 //        List<OrderResponse> listOR = new ArrayList<OrderResponse>();
 //        for (Order order : listO) {

@@ -6,6 +6,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import common.SettingSystem;
 import dao.*;
 import model.*;
 import java.io.IOException;
@@ -25,6 +26,8 @@ import java.util.*;
 public class ProductManagerController extends HttpServlet {
 
     private ProductDAO productDAO = new ProductDAO();
+    private SettingSystem ss = new SettingSystem();
+    private SettingDAO sd = new SettingDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -57,7 +60,7 @@ public class ProductManagerController extends HttpServlet {
             throws ServletException, IOException {
         String key = request.getParameter("search");
         String sCateId = request.getParameter("cateId");
-        String status = request.getParameter("status");
+        String sStatus = request.getParameter("status");
         int pid = -1, cateId = 0;
         if (key != null) {
             try {
@@ -81,31 +84,36 @@ public class ProductManagerController extends HttpServlet {
             pageNumber = Integer.parseInt(pageRaw);
 
         }
+        int status = 0;
+        if (sStatus != null) {
+            status = Integer.parseInt(sStatus);
+        }
         int pageSize = 10;
         int totalProducts = productDAO.getTotalProductsFilter(key, pid, cateId, status);
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
         int startIndex = (pageNumber - 1) * pageSize;
 
         List<Product> products = productDAO.getProducts(startIndex, pageSize, key, pid, cateId, status);
-        List<Categories> listCate = productDAO.getAllCategories();
         request.setAttribute("pageNumber", pageNumber);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("products", products);
-        request.setAttribute("cates", listCate);
+        request.setAttribute("cates", ss.listCate);
+        request.setAttribute("status", ss.listProduct);
         request.getRequestDispatcher("adminHome.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String status = request.getParameter("status");
-        if (status != null) {
-            String spid = request.getParameter("pid");    
+        String sStatus = request.getParameter("status");
+        if (sStatus != null) {
+            String spid = request.getParameter("pid");
+            int status = Integer.parseInt(sStatus);
             int pid = Integer.parseInt(spid);
-            if (status.equals("Active")) {
-                status = "InActive";
+            if (sd.getSettingById(status).getName().equals("Active")) {
+                status = sd.getIdByName("InActive");
             } else {
-                status = "Active";
+                status = sd.getIdByName("Active");
             }
             productDAO.updateProductStatus(pid, status);
             response.setContentType("application/json");
@@ -118,16 +126,20 @@ public class ProductManagerController extends HttpServlet {
             if (sPid != null) {
                 int pid = Integer.parseInt(sPid);
                 Product p = productDAO.getProductById(pid);
-                List<Categories> listCate = productDAO.getAllCategories();   
-                    Gson gson = new Gson();
-                    JsonObject responseData = new JsonObject();
-                    responseData.addProperty("product", gson.toJson(p));
-                    responseData.addProperty("categories", gson.toJson(listCate));
-                    response.setContentType("application/json");
-                    response.setCharacterEncoding("UTF-8");
-                    PrintWriter out = response.getWriter();
-                    out.print(responseData.toString());
-                    out.flush();              
+                Map<String, Integer> mapStatus = new HashMap<>();
+                for(Setting s : ss.listProduct){
+                    mapStatus.put(s.getName(), s.getId());
+                }
+                Gson gson = new Gson();
+                JsonObject responseData = new JsonObject();
+                responseData.addProperty("product", gson.toJson(p));
+                responseData.addProperty("categories", gson.toJson(sd.getSettingByType("Category")));
+                 responseData.addProperty("mapS", gson.toJson(mapStatus));
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
+                out.print(responseData.toString());
+                out.flush();
             }
         }
     }

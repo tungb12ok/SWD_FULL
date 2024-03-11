@@ -53,8 +53,9 @@
                         <div style="display: flex; padding-left: 50px;">
                             <label style="padding: 10px 20px 0 0;">Status:</label>
                             <select class="form-control" id="filter-status" style="width: 200px; height: 50px;text-align: center;" onchange="filterStatus()">
-                                <option value="Active">Active</option>
-                                <option value="InActive">InActive</option>
+                                <c:forEach var="s" items="${status}">
+                                    <option value="${s.id}">${s.name}</option>
+                                </c:forEach>
                             </select>
                         </div>
 
@@ -62,7 +63,7 @@
                             <label  style="padding: 10px 20px 0 0;">Category:</label>
                             <select class="form-control" id="filter-cate" style="width: 200px; height: 50px;text-align: center;" onchange="filterCate()">
                                 <c:forEach var="cate" items="${cates}">
-                                    <option value="${cate.cateId}">${cate.name}</option>
+                                    <option value="${cate.id}">${cate.name}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -94,11 +95,11 @@
                                     <td>${product.sale}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${product.status == 'Active'}">
-                                                <div class="action-status active" id="table-status-${product.productId}" onclick="changeStatus(${product.productId}, '${product.status}')">${product.status}</div>
+                                            <c:when test="${product.status == status.get(0).getId()}">
+                                                <div class="action-status active" id="table-status-${product.productId}" onclick="changeStatus(${product.productId}, '${product.status}')">${status.get(0).getName()}</div>
                                             </c:when>
                                             <c:otherwise>
-                                                <div class="action-status" id="table-status-${product.productId}" onclick="changeStatus(${product.productId}, '${product.status}')">${product.status}</div>
+                                                <div class="action-status" id="table-status-${product.productId}" onclick="changeStatus(${product.productId}, '${product.status}')">${status.get(1).getName()}</div>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
@@ -234,19 +235,20 @@
                             .then(data => {
                                 var productData = JSON.parse(data.product);
                                 var categoryData = JSON.parse(data.categories);
+                                var mapS = JSON.parse(data.mapS);
                                 if (pid !== -1) {
-                                    displayProductDetails(productData, categoryData);
+                                    displayProductDetails(productData, categoryData, mapS);
                                 } else {
                                     var select = document.getElementById('cateid');
                                     categoryData.forEach(function (item) {
                                         var option = document.createElement('option');
-                                        option.value = item.cateId;
+                                        option.value = item.id;
                                         option.textContent = item.name;
                                         select.appendChild(option);
                                     });
                                     document.getElementById('pImage').style.display = "none";
                                     document.getElementById('updateP').addEventListener('click', function () {
-                                        updateProduct(0);
+                                        updateProduct(0, mapS);
                                     });
                                     document.getElementById('title-name').textContent = 'Create New Product';
                                 }
@@ -286,14 +288,14 @@
                             });
                 }
 
-                function displayProductDetails(data, categoryData) {
+                function displayProductDetails(data, categoryData,mapS) {
                     document.getElementById('pImage').src = data.image;
                     document.getElementById('pName').value = data.productName;
                     document.getElementById('pInfor').textContent = data.productInfo;
                     document.getElementById('pSale').value = data.sale;
                     document.getElementById('pPrice').value = formatNumber(data.productPrice);
                     document.getElementById('pQuantity').value = data.productQuantity;
-                    if (data.status === "Active") {
+                    if (data.status === mapS["Active"]) {
                         var toggleButton = document.getElementById("pStatus");
                         toggleButton.textContent = "Active";
                         toggleButton.classList.toggle("active");
@@ -301,13 +303,13 @@
                     var select = document.getElementById('cateid');
                     categoryData.forEach(function (item) {
                         var option = document.createElement('option');
-                        option.value = item.cateId;
+                        option.value = item.id;
                         option.textContent = item.name;
                         select.appendChild(option);
                     });
                     document.getElementById('cateid').value = data.cateId;
                     document.getElementById('updateP').addEventListener('click', function () {
-                        updateProduct(data.productId);
+                        updateProduct(data.productId, mapS);
                     });
                     document.getElementById('title-name').textContent = 'Product Detail: ' + data.productName;
                 }
@@ -345,11 +347,11 @@
                     return true;
                 }
 
-                function updateProduct(productId) {
-                    console.log(validateDetails());
+                function updateProduct(productId, mapS) {
                     if (!validateDetails())
                         return;
                     let newCate = document.getElementById('newCate').value;
+                    console.log( document.getElementById('cateid').value);
                     var product = {
                         productId: productId,
                         productName: document.getElementById('pName').value,
@@ -357,10 +359,11 @@
                         productQuantity: document.getElementById('pQuantity').value,
                         productPrice: document.getElementById('pPrice').value.replace(/,/g, ''),
                         sale: document.getElementById('pSale').value,
-                        status: document.getElementById('pStatus').textContent,
-                        image: document.getElementById('file-name').src !== "http://localhost:9999/SourceShop/ProductController" ? document.getElementById('file-name').src : document.getElementById('pImage').src,
+                        status: mapS[document.getElementById('pStatus').textContent],
+                        image: document.getElementById('file-name').src.toString().includes('images') ? document.getElementById('file-name').src : document.getElementById('pImage').src,
                         categoryId: newCate === "" ? document.getElementById('cateid').value + ";old" : newCate + ";new"
                     };
+                    console.log(product);
                     var queryParams = new URLSearchParams();
                     queryParams.append('product', JSON.stringify(product));
 
@@ -382,6 +385,13 @@
                     while (select.firstChild) {
                         select.removeChild(select.firstChild);
                     }
+                    document.getElementById('pImage').src = "";
+                    document.getElementById('pName').value = "";
+                    document.getElementById('pInfor').textContent = "";
+                    document.getElementById('pSale').value = "";
+                    document.getElementById('pPrice').value = "";
+                    document.getElementById('pQuantity').value = "";
+                    document.getElementById('file-name').src = "";
                 }
 
                 function filterStatus() {
@@ -400,13 +410,27 @@
             let listUrlParam = url.split('/');
             let listParam = listUrlParam[listUrlParam.length - 1].toString().split('?');
             listParam.forEach(function (param) {
-                if (param.toString().includes('cateId')) {
-                    let cate = param.toString().split('=')[1];
-                    document.getElementById('filter-cate').value = cate;
-                }
-                if (param.toString().includes('status')) {
-                    let status = param.toString().split('=')[1];
-                    document.getElementById('filter-status').value = status;
+                if (param.toString().includes('&')) {
+                    let urlSe = param.toString().split('&');
+                    urlSe.forEach(function (u) {
+                        if (u.toString().includes('cateId')) {
+                            let cate = u.toString().split('=')[1];
+                            document.getElementById('filter-cate').value = cate;
+                        }
+                        if (u.toString().includes('status')) {
+                            let status = u.toString().split('=')[1];
+                            document.getElementById('filter-status').value = status;
+                        }
+                    });
+                } else {
+                    if (param.toString().includes('cateId')) {
+                        let cate = param.toString().split('=')[1];
+                        document.getElementById('filter-cate').value = cate;
+                    }
+                    if (param.toString().includes('status')) {
+                        let status = param.toString().split('=')[1];
+                        document.getElementById('filter-status').value = status;
+                    }
                 }
             });
 

@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mysql.cj.xdevapi.JsonParser;
 import dao.ProductDAO;
+import dao.SettingDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.StringReader;
 import model.Categories;
 import model.Product;
+import model.Setting;
 
 /**
  *
@@ -32,6 +34,7 @@ import model.Product;
 public class UpdateProductController extends HttpServlet {
 
     private ProductDAO productDAO = new ProductDAO();
+    private SettingDAO sd = new SettingDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -62,18 +65,22 @@ public class UpdateProductController extends HttpServlet {
             String categoryId = productJson.substring(startIndex, productJson.length());
             categoryId = categoryId.trim().replaceAll("\"", "");
             int cateId = 0;
-            if(categoryId.contains("new")){
-                cateId = productDAO.addCategory(categoryId.split(";")[0].toString());
-            }else{
-                cateId = Integer.parseInt(categoryId.split(";")[0].toString()); 
+            if (categoryId.contains("new")) {
+                Setting s = new Setting();
+                s.setName(categoryId.split(";")[0].toString());
+                s.setStatus("Active");
+                s.setType("Category");
+                cateId = sd.addSetting(s);
+            } else {
+                cateId = Integer.parseInt(categoryId.split(";")[0].toString());
             }
             product.setCateId(cateId);
-            product.setSale(product.getSale()/100);
+            product.setSale(product.getSale() / 100);
             Product p = productDAO.getProductById(product.getProductId());
-            if(product.getProductId() != 0){
+            if (product.getProductId() != 0) {
                 p = new Product(product);
                 productDAO.updateProduct(p);
-            }else{
+            } else {
                 productDAO.addProduct(product);
             }
             System.out.println(p);

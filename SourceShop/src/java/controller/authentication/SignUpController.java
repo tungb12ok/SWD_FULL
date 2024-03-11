@@ -47,7 +47,7 @@ public class SignUpController extends HttpServlet {
         u.setPassword(password);
         u.setPincode(Integer.parseInt(pincode));
         u.setMobile(mobile);
-        u.setStatus("Active");
+        u.setStatus(1);
         u.setRole(2);
 
         // Basic form validation

@@ -27,6 +27,7 @@ public class OrderListController extends HttpServlet {
 
     private OrderDAO orderDao = new OrderDAO();
     private OrderDetailDAO orderDetailDAO = new OrderDetailDAO();
+    private SettingDAO sd = new SettingDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -67,10 +68,9 @@ public class OrderListController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         UserDAO udao = new UserDAO();
-        String status = request.getParameter("status");
+        String sStatus = request.getParameter("status");
         String key = request.getParameter("search");
         String admin = request.getParameter("admin");
-        System.out.println(key);
         List<Order> listO = orderDao.getAllOrders();
         List<Order> listAfter = new ArrayList<>();
         if (key != null) {
@@ -81,21 +81,17 @@ public class OrderListController extends HttpServlet {
                 }
                 continue;
             }
-        }else if(key == null){
-            listAfter = listO;
-        }        
-        else if (status != null) {
+        } else if (sStatus != null) {
+            int status = Integer.parseInt(sStatus);
             for (Order order : listO) {
-                if (order.getStatus().equals(status)) {
+                if (order.getStatus() == status) {
                     listAfter.add(order);
                 }
                 continue;
             }
-        } else if(status == null && key == null) {
-            listAfter = listO;
-        }
-        
-        if (admin != null) {
+            System.out.println(status + "vvvv");
+            System.out.println(listAfter);
+        } else if (admin != null) {
             int adminId = Integer.parseInt(admin);
             for (Order order : listO) {
                 if (order.getUpdateBy() == adminId) {
@@ -103,10 +99,10 @@ public class OrderListController extends HttpServlet {
                 }
                 continue;
             }
-        } else if(admin == null && key == null && status == null) {
+        } else {
             listAfter = listO;
         }
-        List<User> listAdmin = udao.getAllUsersNameByRole(1);
+        List<User> listAdmin = udao.getAllUsersNameByRole(sd.getIdByName("Admin"));
         if (listAfter.size() == 0) {
             request.setAttribute("pageNumber", 1);
             request.setAttribute("totalPages", 0);
@@ -148,6 +144,8 @@ public class OrderListController extends HttpServlet {
             request.setAttribute("listO", list);
         }
         request.setAttribute("admins", listAdmin);
+        List<Setting> list = sd.getSettingByType("Status");
+        request.setAttribute("status", list);
         request.getRequestDispatcher("OrderList.jsp").forward(request, response);
     }
 
@@ -171,10 +169,16 @@ public class OrderListController extends HttpServlet {
             Product p = pd.getProductById(odd.getProductId());
             mapP.put(odd.getOrderDetailId(), p);
         }
+        Map<Integer, String> mapS = new HashMap<>();
+        List<Setting> list = sd.getSettingByType("Status");
+        for (Setting s : list) {
+            mapS.put(s.getId(), s.getName());
+        }
         Gson gson = new Gson();
         JsonObject responseData = new JsonObject();
         responseData.addProperty("map", gson.toJson(mapP));
         responseData.addProperty("list", gson.toJson(listO));
+         responseData.addProperty("mapS", gson.toJson(mapS));
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();

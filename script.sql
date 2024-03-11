@@ -26,15 +26,11 @@ CREATE TABLE `contact` (
   `id` int NOT NULL AUTO_INCREMENT,
   `userId` int NOT NULL,
   `description` varchar(255) NOT NULL,
-  `status` varchar(50) NOT NULL,
   `settingId` int NOT NULL,
-  `statusId` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_contact_user` (`userId`),
   KEY `FK_contact_setting` (`settingId`),
-  KEY `FK_contact_status` (`statusId`),
   CONSTRAINT `FK_contact_setting` FOREIGN KEY (`settingId`) REFERENCES `setting` (`id`),
-  CONSTRAINT `FK_contact_status` FOREIGN KEY (`statusId`) REFERENCES `status` (`id`),
   CONSTRAINT `FK_contact_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -61,13 +57,13 @@ CREATE TABLE `feedbacks` (
   `userId` int NOT NULL,
   `description` varchar(2000) NOT NULL,
   `rate` int NOT NULL,
-  `statusId` int NOT NULL,
+  `status` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_FeedBacks_product` (`pId`),
   KEY `FK_FeedBacks_user` (`userId`),
-  KEY `FK_feedbacks_status` (`statusId`),
+  KEY `FK_feedbacks_status` (`status`),
   CONSTRAINT `FK_FeedBacks_product` FOREIGN KEY (`pId`) REFERENCES `product` (`pid`),
-  CONSTRAINT `FK_feedbacks_status` FOREIGN KEY (`statusId`) REFERENCES `status` (`id`),
+  CONSTRAINT `FK_feedbacks_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`),
   CONSTRAINT `FK_FeedBacks_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -129,11 +125,11 @@ CREATE TABLE `orders` (
   `mobile` varchar(10) DEFAULT NULL,
   `address` varchar(200) DEFAULT NULL,
   `payment` varchar(50) DEFAULT NULL,
-  `statusId` int NOT NULL,
+  `status` int DEFAULT NULL,
   PRIMARY KEY (`orderid`),
   KEY `fk_userId` (`userId`),
-  KEY `FK_orders_status` (`statusId`),
-  CONSTRAINT `FK_orders_status` FOREIGN KEY (`statusId`) REFERENCES `status` (`id`),
+  KEY `FK_orders_status` (`status`),
+  CONSTRAINT `FK_orders_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`),
   CONSTRAINT `fk_userId` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -162,13 +158,13 @@ CREATE TABLE `product` (
   `pquantity` int DEFAULT NULL,
   `image` varchar(500) DEFAULT NULL,
   `sale` decimal(2,2) DEFAULT NULL,
-  `settingId` int DEFAULT NULL,
-  `statusId` int NOT NULL,
+  `settingId` int NOT NULL,
+  `status` int DEFAULT NULL,
   PRIMARY KEY (`pid`),
   KEY `FK_product_setting` (`settingId`),
-  KEY `FK_product_status` (`statusId`),
+  KEY `fk_status_idx` (`status`),
   CONSTRAINT `FK_product_setting` FOREIGN KEY (`settingId`) REFERENCES `setting` (`id`),
-  CONSTRAINT `FK_product_status` FOREIGN KEY (`statusId`) REFERENCES `status` (`id`)
+  CONSTRAINT `fk_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -208,29 +204,6 @@ INSERT INTO `setting` VALUES (1,'Admin','Role','Active'),(2,'Customer','Role','A
 UNLOCK TABLES;
 
 --
--- Table structure for table `status`
---
-
-DROP TABLE IF EXISTS `status`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `status` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `status`
---
-
-LOCK TABLES `status` WRITE;
-/*!40000 ALTER TABLE `status` DISABLE KEYS */;
-/*!40000 ALTER TABLE `status` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user`
 --
 
@@ -246,13 +219,13 @@ CREATE TABLE `user` (
   `pincode` int NOT NULL,
   `password` varchar(20) NOT NULL,
   `role` int NOT NULL,
-  `statusId` int NOT NULL,
+  `status` int DEFAULT NULL,
   PRIMARY KEY (`userId`),
   UNIQUE KEY `email` (`email`),
   KEY `fk_role_idx` (`role`),
-  KEY `FK_user_status` (`statusId`),
+  KEY `FK_user_status` (`status`),
   CONSTRAINT `fk_role` FOREIGN KEY (`role`) REFERENCES `setting` (`id`),
-  CONSTRAINT `FK_user_status` FOREIGN KEY (`statusId`) REFERENCES `status` (`id`)
+  CONSTRAINT `FK_user_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -274,4 +247,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-11 15:31:35
+-- Dump completed on 2024-03-11 16:27:29

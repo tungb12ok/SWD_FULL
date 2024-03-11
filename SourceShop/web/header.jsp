@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     <body style="background-color: #E6F9E6;">
-        <c:if test="${user.role ==2}">
+        <c:if test="${user.role ==2 || user == null}">
         <!-- Navigation Bar -->
         <nav class="navbar navbar-default" style="margin-bottom: 0;">
             <div class="container-fluid">
@@ -134,7 +134,7 @@
                 <div class="input-group">
                     <input type="text" class="form-control" size="50" name="search" placeholder="Search Items" required>
                     <div class="input-group-btn">
-                        <input type="submit" class="btn btn-danger" value="Search">
+                        <input type="submit" class="btn btn-danger" value="Search11">
                     </div>
                 </div>
             </form>

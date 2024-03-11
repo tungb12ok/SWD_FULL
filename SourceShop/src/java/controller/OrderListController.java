@@ -68,18 +68,33 @@ public class OrderListController extends HttpServlet {
             throws ServletException, IOException {
         UserDAO udao = new UserDAO();
         String status = request.getParameter("status");
-        System.out.println(status);
+        String key = request.getParameter("search");
+        String admin = request.getParameter("admin");
+        System.out.println(key);
         List<Order> listO = orderDao.getAllOrders();
         List<Order> listAfter = new ArrayList<>();
-        if (status != null) {
+        if (key != null) {
+            for (Order order : listO) {
+                if (order.getEmail().contains(key) || order.getEmail().contains(key)
+                        || order.getMobile().contains(key) || udao.getUserById(order.getUpdateBy()).getName().contains(key)) {
+                    listAfter.add(order);
+                }
+                continue;
+            }
+        }else if(key == null){
+            listAfter = listO;
+        }        
+        else if (status != null) {
             for (Order order : listO) {
                 if (order.getStatus().equals(status)) {
                     listAfter.add(order);
                 }
                 continue;
             }
+        } else if(status == null && key == null) {
+            listAfter = listO;
         }
-        String admin = request.getParameter("admin");
+        
         if (admin != null) {
             int adminId = Integer.parseInt(admin);
             for (Order order : listO) {
@@ -88,6 +103,8 @@ public class OrderListController extends HttpServlet {
                 }
                 continue;
             }
+        } else if(admin == null && key == null && status == null) {
+            listAfter = listO;
         }
         List<User> listAdmin = udao.getAllUsersNameByRole(1);
         if (listAfter.size() == 0) {

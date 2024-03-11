@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
@@ -27,9 +28,15 @@ public class HomeController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ProductService ps = new ProductService();
-        User u = new User();
-//        u.setUserId(1);
-//        request.getSession().setAttribute("user", u);
+//        User u = (User) request.getSession().getAttribute("user");
+//        if (u == null) {
+//            u = new User();
+//            Random random = new Random();
+//            int userId = random.nextInt(100000); // Giả sử userId là một số ngẫu nhiên trong khoảng từ 0 đến 999999
+//            u.setUserId(2);
+//            request.getSession().setAttribute("userGuest", u);
+//        }
+
         CateDAO cDAO = new CateDAO();
         try {
             request.setAttribute("listCate", cDAO.getAll());

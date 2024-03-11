@@ -23,7 +23,6 @@
              style="color: black; font-size: 14px; font-weight: bold;"></div>
         <!-- Start of Product Items List -->
         <jsp:include page="/common/Message.jsp" />
-
         <div class="container">
             <div class="row text-center">
                 <c:forEach var="i" items="${list}">

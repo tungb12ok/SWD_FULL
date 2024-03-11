@@ -1,87 +1,83 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-         pageEncoding="ISO-8859-1"%>
-<%@ page import="com.shashi.service.impl.*, com.shashi.service.*"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Logout Header</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet"
-              href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/changes.css">
-        <script
-        src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script
-        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-        <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    </head>
-    <body style="background-color: #E6F9E6;">
-        <!--Company Header Starting  -->
+<head>
+    <title>Ellison Electronics</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/changes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body style="background-color: #E6F9E6;">
 
-        <!-- Company Header Ending -->
-
-       
-
-        <div class="container-fluid text-center"
-             style="margin-top: 45px; background-color: #33cc33; color: white; padding: 5px;">
-            <h2>Ellison Electronics</h2>
-            <h6>We specialize in Electronics</h6>
-            <form class="form-inline" action="index.jsp" method="get">
-                <div class="input-group">
-                    <input type="text" class="form-control" size="50" name="search"
-                           placeholder="Search Items" required>
-                    <div class="input-group-btn">
-                        <input type="submit" class="btn btn-danger" value="Search" />
-                    </div>
-                </div>
-            </form>
-            <p align="center"
-               style="color: blue; font-weight: bold; margin-top: 5px; margin-bottom: 5px;"
-               id="message"></p>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-default" style="margin-bottom: 0;">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.jsp"><span class="glyphicon glyphicon-home"></span> Shopping Center</a>
         </div>
 
-        <!-- Starting Navigation Bar -->
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse"
-                            data-target="#myNavbar">
-                        <span class="icon-bar"></span> <span class="icon-bar"></span> <span
-                            class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="index.jsp"><span
-                            class="glyphicon glyphicon-home">&nbsp;</span>Shopping Center</a>
-                </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav navbar-right">
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+                <li><a href="index.jsp">Products</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Category <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.jsp?type=mobile">Mobiles</a></li>
+                        <li><a href="index.jsp?type=tv">TVs</a></li>
+                        <li><a href="index.jsp?type=laptop">Laptops</a></li>
+                        <li><a href="index.jsp?type=camera">Camera</a></li>
+                        <li><a href="index.jsp?type=speaker">Speakers</a></li>
+                        <li><a href="index.jsp?type=tablet">Tablets</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <c:choose>
+                    <c:when test="${user == null}">
                         <li><a href="login.jsp">Login</a></li>
                         <li><a href="register.jsp">Register</a></li>
-                        <li><a href="index.jsp">Products</a></li>
-                        <li class="dropdown"><a class="dropdown-toggle"
-                                                data-toggle="dropdown" href="#">Category <span class="caret"></span>
-                            </a>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">${user.name} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="index.jsp?type=mobile">Mobiles</a></li>
-                                <li><a href="index.jsp?type=tv">TVs</a></li>
-                                <li><a href="index.jsp?type=laptop">Laptops</a></li>
-                                <li><a href="index.jsp?type=camera">Camera</a></li>
-                                <li><a href="index.jsp?type=speaker">Speakers</a></li>
-                                <li><a href="index.jsp?type=tablet">Tablets</a></li>
-                            </ul></li>
-                    </ul>
-                </div>
+                                <li><a href="#">Profile</a></li>
+                                <li><a href="#">Settings</a></li>
+                                <li><a href="signOut">Logout</a></li>
+                            </ul>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
+                <li><a href="cart"><i class="fa fa-shopping-cart"></i> Cart <span class="badge">${sessionScope.cart.items}</span></a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<!-- Company Header -->
+<div class="container-fluid text-center" style="background-color: #33cc33; color: white; padding: 10px;">
+    <h2>Ellison Electronics</h2>
+    <h6>We specialize in Electronics</h6>
+    <form class="form-inline" action="index.jsp" method="get">
+        <div class="input-group">
+            <input type="text" class="form-control" size="50" name="search" placeholder="Search Items" required>
+            <div class="input-group-btn">
+                <input type="submit" class="btn btn-danger" value="Search">
             </div>
-        </nav>
-      
-        <!-- End of Navigation Bar -->
-    </body>
-<!--    <script>
-        function searchAdmin() {
-            let key = document.getElementById("text-search").value;
-            console.log(key);
-        }
-    </script>-->
+        </div>
+    </form>
+</div>
+<!-- End of Navigation Bar -->
+
+</body>
 </html>

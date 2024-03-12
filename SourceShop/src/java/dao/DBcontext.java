@@ -13,8 +13,8 @@ public class DBcontext {
     public DBcontext() {
         try {
             // Change the username, password, and URL to connect to your own MySQL database
-            String username = "root"; // Typical default username for MySQL
-            String password = "12345"; // Your MySQL password
+            String username = "sa"; // Typical default username for MySQL
+            String password = "123456"; // Your MySQL password
             // Update the URL for your MySQL database; specify your database name at the end
             String url = "jdbc:mysql://localhost:3306/ShoppingCart?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
             // Use the MySQL JDBC driver class

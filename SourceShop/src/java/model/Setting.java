@@ -6,17 +6,14 @@ package model;
 
 import lombok.Data;
 
-
+/**
+ *
+ * @author win
+ */
 @Data
-public class User {
-
-    private int userId;
-    private String email;
+public class Setting {
+    private int id;
     private String name;
-    private String mobile;
-    private String address;
-    private int pincode;
-    private String password;
-    private int status;
-    private int role;
+    private String type;
+    private String status;
 }

@@ -9,10 +9,6 @@
         <link rel="stylesheet"
               href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/changes.css">
-        <script
-        src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script
-        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     </head>
     <body style="background-color: #E6F9E6;">
         <jsp:include page="header.jsp" />
@@ -23,7 +19,6 @@
              style="color: black; font-size: 14px; font-weight: bold;"></div>
         <!-- Start of Product Items List -->
         <jsp:include page="/common/Message.jsp" />
-
         <div class="container">
             <div class="row text-center">
                 <c:forEach var="i" items="${list}">
@@ -39,13 +34,12 @@
 
                                 <button type="submit" name="action" value="addToCart" class="btn btn-success">Add to Cart</button>
                                 &nbsp;&nbsp;&nbsp;
-
-                                <button type="submit" name="action" value="buyNow" class="btn btn-primary">Buy Now</button>
-
-                                <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
+                                <c:if test="${cart.containsProduct(user.userId, i.productId)}">
+                                    <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
+                                </c:if>
                                 &nbsp;&nbsp;&nbsp;
 
-                                <button type="submit" name="action" value="checkout" class="btn btn-success">Checkout</button>
+                                <button type="submit" name="action" value="checkout" class="btn btn-success">Pay Now</button>
                             </form>
                             <br />
                         </div>
@@ -55,10 +49,8 @@
 
             </div>
         </div>
-        <!-- ENd of Product Items List -->
-
-
-        <%@ include file="footer.html"%>
+        <!-- ENd of Product Items List --
+        <%@ include file="footer.jsp"%>
 
     </body>
 </html>

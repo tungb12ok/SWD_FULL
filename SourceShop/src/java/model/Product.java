@@ -15,7 +15,7 @@ public class Product {
     private double productPrice;
     private int productQuantity;
     private String image;
-    private String status;
+    private int status;
     private double sale;
     
      public Product() {

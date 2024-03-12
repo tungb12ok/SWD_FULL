@@ -4,10 +4,11 @@
  */
 package controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import common.OrderResponse;
-import dao.*;
+import dao.OrderDAO;
+import dao.OrderDetailDAO;
+import dao.SettingDAO;
+import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,15 +16,20 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.*;
-import model.*;
+import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+import model.Order;
+import model.OrderDetail;
+import model.Setting;
+import model.User;
 
 /**
  *
  * @author win
  */
-@WebServlet(name = "OrderListController", urlPatterns = {"/order-list"})
-public class OrderListController extends HttpServlet {
+@WebServlet(name = "OrderHistoryController", urlPatterns = {"/order-history"})
+public class OrderHistoryController extends HttpServlet {
 
     private OrderDAO orderDao = new OrderDAO();
     private OrderDetailDAO orderDetailDAO = new OrderDetailDAO();
@@ -46,10 +52,10 @@ public class OrderListController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderListController</title>");
+            out.println("<title>Servlet OrderHistoryController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OrderListController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet OrderHistoryController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -67,21 +73,17 @@ public class OrderListController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+//        if (user == null || user.getRole() != 2) {
+//            request.getRequestDispatcher("orderHistory.jsp").forward(request, response);
+//        } else {
         UserDAO udao = new UserDAO();
         String sStatus = request.getParameter("status");
-        String key = request.getParameter("search");
-        String admin = request.getParameter("admin");
-        List<Order> listO = orderDao.getAllOrders();
+        List<Order> listO = orderDao.getAllOrdersByUserId(user.getUserId());
         List<Order> listAfter = new ArrayList<>();
-        if (key != null) {
-            for (Order order : listO) {
-                if (order.getEmail().contains(key) || order.getEmail().contains(key)
-                        || order.getMobile().contains(key) || udao.getUserById(order.getUpdateBy()).getName().contains(key)) {
-                    listAfter.add(order);
-                }
-                continue;
-            }
-        } else if (sStatus != null) {
+        if(sStatus == "") sStatus = null;
+        if (sStatus != null) {
             int status = Integer.parseInt(sStatus);
             for (Order order : listO) {
                 if (order.getStatus() == status) {
@@ -89,20 +91,10 @@ public class OrderListController extends HttpServlet {
                 }
                 continue;
             }
-            System.out.println(status + "vvvv");
-            System.out.println(listAfter);
-        } else if (admin != null) {
-            int adminId = Integer.parseInt(admin);
-            for (Order order : listO) {
-                if (order.getUpdateBy() == adminId) {
-                    listAfter.add(order);
-                }
-                continue;
-            }
         } else {
             listAfter = listO;
         }
-        List<User> listAdmin = udao.getAllUsersNameByRole(sd.getIdByName("Admin"));
+        List<User> listAdmin = udao.getAllUsersNameByRole(1);
         if (listAfter.size() == 0) {
             request.setAttribute("pageNumber", 1);
             request.setAttribute("totalPages", 0);
@@ -143,10 +135,11 @@ public class OrderListController extends HttpServlet {
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("listO", list);
         }
-        request.setAttribute("admins", listAdmin);
         List<Setting> list = sd.getSettingByType("Status");
         request.setAttribute("status", list);
-        request.getRequestDispatcher("OrderList.jsp").forward(request, response);
+        request.setAttribute("admins", listAdmin);
+        request.getRequestDispatcher("orderHistory.jsp").forward(request, response);
+//        }
     }
 
     /**
@@ -160,48 +153,50 @@ public class OrderListController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String sStatus = request.getParameter("status");
-        if (sStatus != null) {
-            int status = Integer.parseInt(sStatus);
-            String orderId = request.getParameter("oredrId");
-            List<Setting> list = sd.getSettingByType("Status");
-            for (Setting s : list) {
-                if (s.getName().equals("Cancelled")) {
-                    orderDao.updateOrderStatus(orderId, s.getId());
-                }
-            }
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            PrintWriter out = response.getWriter();
-            out.print("Success");
-            out.flush();
-
-        } else {
-            ProductDAO pd = new ProductDAO();
-            String soId = request.getParameter("orderId");
-            Order od = orderDao.getOrderById(soId);
-            List<OrderDetail> listO = orderDetailDAO.getOrderDetailsByOrderId(od.getOrderId());
-            Map<String, Product> mapP = new HashMap<>();
-            for (OrderDetail odd : listO) {
-                Product p = pd.getProductById(odd.getProductId());
-                mapP.put(odd.getOrderDetailId(), p);
-            }
-            Map<Integer, String> mapS = new HashMap<>();
-            List<Setting> list = sd.getSettingByType("Status");
-            for (Setting s : list) {
-                mapS.put(s.getId(), s.getName());
-            }
-            Gson gson = new Gson();
-            JsonObject responseData = new JsonObject();
-            responseData.addProperty("map", gson.toJson(mapP));
-            responseData.addProperty("list", gson.toJson(listO));
-            responseData.addProperty("mapS", gson.toJson(mapS));
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            PrintWriter out = response.getWriter();
-            out.print(responseData.toString());
-            out.flush();
+        UserDAO udao = new UserDAO();
+        String orderId = request.getParameter("orderId");
+        List<Setting> list = sd.getSettingByType("Status");
+        int status = 0;
+        for(Setting s : list){
+            if(s.getName().equals("Cancelled")) status = s.getId();
         }
+        orderDao.updateOrderStatus(orderId, status);
+//        List<Order> listO = orderDao.getAllOrders();
+//        List<OrderResponse> listOR = new ArrayList<OrderResponse>();
+//        for (Order order : listO) {
+//            List<OrderDetail> listOd = orderDetailDAO.getOrderDetailsByOrderId(order.getOrderId());
+//            double total = 0;
+//            OrderResponse oR = new OrderResponse(order);
+//            User cus = udao.getUserById(order.getUserId());
+//            User sale = udao.getUserById(order.getUpdateBy());
+//            if (cus != null) {
+//                oR.setReceiver(cus.getName());
+//            }
+//            if (sale != null) {
+//                oR.setSaler(sale.getName());
+//            }
+//            for (OrderDetail od : listOd) {
+//                total += od.getAmount() * od.getQuantity();
+//            }
+//            oR.setTotal(total);
+//            listOR.add(oR);
+//        }
+//        int pageNumber = 1;
+//        int pageSize = 10;
+//        int totalProducts = listOR.size();
+//        int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+//        int startIndex = (pageNumber - 1) * pageSize;
+//        System.out.println(listOR);
+//        List<OrderResponse> list = listOR.subList(startIndex, Math.min(startIndex + pageSize, totalProducts));
+//        request.setAttribute("pageNumber", pageNumber);
+//        request.setAttribute("totalPages", totalPages);
+//        request.setAttribute("listO", list);
+//        request.getRequestDispatcher("orderHistory.jsp").forward(request, response);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print("Sucess");
+        out.flush();
     }
 
     /**

@@ -16,7 +16,7 @@ public class OrderDAO extends DBcontext {
             statement.setString(1, order.getOrderId());
             statement.setInt(2, userId);
             statement.setDouble(3, order.getAmount());
-            statement.setString(4, order.getStatus());
+            statement.setInt(4, order.getStatus());
 
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
@@ -36,7 +36,35 @@ public class OrderDAO extends DBcontext {
                 order.setOrderId(resultSet.getString("orderid"));
                 order.setUserId(resultSet.getInt("userId"));
                 order.setAmount(resultSet.getDouble("amount"));
-                order.setStatus(resultSet.getString("status"));
+                order.setStatus(resultSet.getInt("status"));
+                order.setTime(resultSet.getDate("time"));
+                order.setEmail(resultSet.getString("email"));
+                order.setUpdateTime(resultSet.getDate("updateTime"));
+                order.setUpdateBy(resultSet.getInt("updateBy"));
+                order.setAddress(resultSet.getString("address"));
+                order.setPayment(resultSet.getString("payment"));
+                order.setMobile(resultSet.getString("mobile"));
+
+                orderList.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orderList;
+    }
+
+    public List<Order> getAllOrdersByUserId(int userId) {
+        List<Order> orderList = new ArrayList<>();
+        String sql = "SELECT orderid, userId, amount, status, time, email, updateTime, updateBy, address, payment, mobile FROM orders where userId = ? order by time desc";
+        try ( PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Order order = new Order();
+                order.setOrderId(resultSet.getString("orderid"));
+                order.setUserId(resultSet.getInt("userId"));
+                order.setAmount(resultSet.getDouble("amount"));
+                order.setStatus(resultSet.getInt("status"));
                 order.setTime(resultSet.getDate("time"));
                 order.setEmail(resultSet.getString("email"));
                 order.setUpdateTime(resultSet.getDate("updateTime"));
@@ -54,7 +82,7 @@ public class OrderDAO extends DBcontext {
     }
 
     public Order getOrderById(String orderId) {
-        String sql = "SELECT orderid, userId, amount, status FROM [dbo].[orders] WHERE orderid = ?";
+        String sql = "SELECT orderid, userId, amount, status, time, email, updateTime, updateBy, address, payment, mobile FROM orders WHERE orderid like ?";
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, orderId);
             try ( ResultSet resultSet = statement.executeQuery()) {
@@ -63,7 +91,14 @@ public class OrderDAO extends DBcontext {
                     order.setOrderId(resultSet.getString("orderid"));
                     order.setUserId(resultSet.getInt("userId"));
                     order.setAmount(resultSet.getDouble("amount"));
-                    order.setStatus(resultSet.getString("status"));
+                    order.setStatus(resultSet.getInt("status"));
+                    order.setTime(resultSet.getDate("time"));
+                    order.setEmail(resultSet.getString("email"));
+                    order.setUpdateTime(resultSet.getDate("updateTime"));
+                    order.setUpdateBy(resultSet.getInt("updateBy"));
+                    order.setAddress(resultSet.getString("address"));
+                    order.setPayment(resultSet.getString("payment"));
+                    order.setMobile(resultSet.getString("mobile"));
                     return order;
                 }
             }
@@ -78,8 +113,23 @@ public class OrderDAO extends DBcontext {
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, order.getUserId());
             statement.setDouble(2, order.getAmount());
-            statement.setString(3, order.getStatus());
+            statement.setInt(3, order.getStatus());
             statement.setString(4, order.getOrderId());
+
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateOrderStatus(String orderId, int status) {
+        String sql = "UPDATE orders SET status=? WHERE orderid=?";
+        try ( PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, status);
+            statement.setString(2, orderId);
 
             int rowsUpdated = statement.executeUpdate();
             return rowsUpdated > 0;
@@ -104,7 +154,7 @@ public class OrderDAO extends DBcontext {
 
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
-        System.out.println(dao.getAllOrders());
+        System.out.println(dao.getAllOrdersByUserId(1));
         // Add order example
 //        Order newOrder = new Order();
 //        newOrder.setOrderId("123");

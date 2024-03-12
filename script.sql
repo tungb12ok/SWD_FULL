@@ -1,124 +1,250 @@
--- Switching context or selecting a database in MySQL
-USE `ShoppingCart`;
--- MySQL doesn't have a direct equivalent for `GO`, so it's omitted.
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
+--
+-- Host: localhost    Database: shoppingcart
+-- ------------------------------------------------------
+-- Server version	8.2.0
 
--- Creating the Categories table
-CREATE TABLE `Categories` (
-	`id` INT NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(50) DEFAULT NULL,
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Creating the product table
-CREATE TABLE `product` (
-	`pid` INT NOT NULL AUTO_INCREMENT,
-	`pname` VARCHAR(100) NOT NULL,
-	`pinfo` VARCHAR(350) DEFAULT NULL,
-	`pprice` DECIMAL(12, 2) DEFAULT NULL,
-	`pquantity` INT DEFAULT NULL,
-	`image` VARCHAR(500) DEFAULT NULL,
-	`status` VARCHAR(50) DEFAULT NULL,
-	`sale` DECIMAL(2, 2) DEFAULT NULL,
-	`cateId` INT DEFAULT NULL,
-	PRIMARY KEY (`pid`),
-	CONSTRAINT `FK_product_Categories` FOREIGN KEY (`cateId`) REFERENCES `Categories` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+--
+-- Table structure for table `contact`
+--
 
--- Creating the user table
-CREATE TABLE `user` (
-	`userId` INT NOT NULL AUTO_INCREMENT,
-	`email` VARCHAR(60) NOT NULL,
-	`name` VARCHAR(50) NOT NULL,
-	`mobile` BIGINT NOT NULL,
-	`address` VARCHAR(250) NOT NULL,
-	`pincode` INT NOT NULL,
-	`password` VARCHAR(20) NOT NULL,
-	`status` VARCHAR(20) NOT NULL,
-	`role` INT NOT NULL,
-	PRIMARY KEY (`userId`),
-	UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+DROP TABLE IF EXISTS `contact`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `contact` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `userId` int NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `settingId` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_contact_user` (`userId`),
+  KEY `FK_contact_setting` (`settingId`),
+  CONSTRAINT `FK_contact_setting` FOREIGN KEY (`settingId`) REFERENCES `setting` (`id`),
+  CONSTRAINT `FK_contact_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- It seems there was a typo with the creation of a second categories table named "categries". Assuming it was unintended, I'll skip recreating it. If it was intended, you would follow a similar pattern as above but with the correct table name.
+--
+-- Dumping data for table `contact`
+--
 
--- Creating the FeedBacks table
-CREATE TABLE `FeedBacks` (
-	`id` INT NOT NULL,
-	`pId` INT NOT NULL,
-	`userId` INT NOT NULL,
-	`description` VARCHAR(2000) NOT NULL,
-	`rate` INT NOT NULL,
-	PRIMARY KEY (`id`),
-	CONSTRAINT `FK_FeedBacks_product` FOREIGN KEY (`pId`) REFERENCES `product` (`pid`),
-	CONSTRAINT `FK_FeedBacks_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+LOCK TABLES `contact` WRITE;
+/*!40000 ALTER TABLE `contact` DISABLE KEYS */;
+/*!40000 ALTER TABLE `contact` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- Creating the orders table
+--
+-- Table structure for table `feedbacks`
+--
+
+DROP TABLE IF EXISTS `feedbacks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `feedbacks` (
+  `id` int NOT NULL,
+  `pId` int NOT NULL,
+  `userId` int NOT NULL,
+  `description` varchar(2000) NOT NULL,
+  `rate` int NOT NULL,
+  `status` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_FeedBacks_product` (`pId`),
+  KEY `FK_FeedBacks_user` (`userId`),
+  KEY `FK_feedbacks_status` (`status`),
+  CONSTRAINT `FK_FeedBacks_product` FOREIGN KEY (`pId`) REFERENCES `product` (`pid`),
+  CONSTRAINT `FK_feedbacks_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`),
+  CONSTRAINT `FK_FeedBacks_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `feedbacks`
+--
+
+LOCK TABLES `feedbacks` WRITE;
+/*!40000 ALTER TABLE `feedbacks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `feedbacks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `orderdetail`
+--
+
+DROP TABLE IF EXISTS `orderdetail`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `orderdetail` (
+  `odId` varchar(50) NOT NULL,
+  `orderId` varchar(45) DEFAULT NULL,
+  `productId` int DEFAULT NULL,
+  `quantity` int DEFAULT NULL,
+  `amount` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`odId`),
+  KEY `FK_orderDetail_orders` (`orderId`),
+  KEY `FK_orderDetail_product1` (`productId`),
+  CONSTRAINT `FK_orderDetail_orders` FOREIGN KEY (`orderId`) REFERENCES `orders` (`orderid`),
+  CONSTRAINT `FK_orderDetail_product1` FOREIGN KEY (`productId`) REFERENCES `product` (`pid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `orderdetail`
+--
+
+LOCK TABLES `orderdetail` WRITE;
+/*!40000 ALTER TABLE `orderdetail` DISABLE KEYS */;
+/*!40000 ALTER TABLE `orderdetail` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `orders`
+--
+
+DROP TABLE IF EXISTS `orders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `orders` (
-	`orderid` VARCHAR(45) NOT NULL,
-	`time` DATETIME NOT NULL,
-	`email` VARCHAR(50) DEFAULT NULL,
-	`updateTime` DATETIME DEFAULT NULL,
-	`updateBy` INT DEFAULT NULL,
-	`userId` INT DEFAULT NULL,
-	`amount` DECIMAL(10, 2) DEFAULT NULL,
-	`status` VARCHAR(50) DEFAULT NULL,
-	`mobile` VARCHAR(10) DEFAULT NULL,
-	`address` VARCHAR(200) DEFAULT NULL,
-	`payment` VARCHAR(50) DEFAULT NULL,
-	PRIMARY KEY (`orderid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `orderid` varchar(45) NOT NULL,
+  `time` datetime NOT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `updateTime` datetime DEFAULT NULL,
+  `updateBy` int DEFAULT NULL,
+  `userId` int DEFAULT NULL,
+  `amount` decimal(10,2) DEFAULT NULL,
+  `mobile` varchar(10) DEFAULT NULL,
+  `address` varchar(200) DEFAULT NULL,
+  `payment` varchar(50) DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  PRIMARY KEY (`orderid`),
+  KEY `fk_userId` (`userId`),
+  KEY `FK_orders_status` (`status`),
+  CONSTRAINT `FK_orders_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`),
+  CONSTRAINT `fk_userId` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Creating the orderDetail table
-CREATE TABLE `orderDetail` (
-	`odId` VARCHAR(50) NOT NULL,
-	`orderId` VARCHAR(45) DEFAULT NULL,
-	`productId` INT DEFAULT NULL,
-	`quantity` INT DEFAULT NULL,
-	`amount` DECIMAL(10, 2) DEFAULT NULL,
-	PRIMARY KEY (`odId`),
-	CONSTRAINT `FK_orderDetail_orders` FOREIGN KEY (`orderId`) REFERENCES `orders` (`orderid`),
-	CONSTRAINT `FK_orderDetail_product1` FOREIGN KEY (`productId`) REFERENCES `product` (`pid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+--
+-- Dumping data for table `orders`
+--
 
-ALTER TABLE `orders` 
-ADD CONSTRAINT `fk_userId`
-FOREIGN KEY (`userId`) 
-REFERENCES `user`(`userId`)
-ON DELETE SET NULL
-ON UPDATE CASCADE;
--- Inserting data into Categories table
-INSERT INTO Categories (name) VALUES
-('Electronics'),
-('Clothing'),
-('Books');
+LOCK TABLES `orders` WRITE;
+/*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+/*!40000 ALTER TABLE `orders` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- Inserting data into product table
-INSERT INTO product (pname, pinfo, pprice, pquantity, image, status, sale, cateId) VALUES
-('Laptop', 'A powerful laptop for all your computing needs', 999.99, 50, 'laptop.jpg', 'Active', 0.0, 1),
-('T-Shirt', 'A comfortable cotton t-shirt', 19.99, 100, 'tshirt.jpg', 'Active', 0.0, 2),
-('Java Programming Book', 'Learn Java programming from scratch', 29.99, 30, 'javabook.jpg', 'Active', 0.0, 3);
+--
+-- Table structure for table `product`
+--
 
--- Inserting data into user table
-INSERT INTO user (email, name, mobile, address, pincode, password, status, role) VALUES
-('user1@example.com', 'User One', 1234567890, '123 Main St, City, Country', 12345, 'password123', 'Active', 1),
-('user2@example.com', 'User Two', 9876543210, '456 Elm St, City, Country', 54321, 'password456', 'Active', 2);
+DROP TABLE IF EXISTS `product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `product` (
+  `pid` int NOT NULL AUTO_INCREMENT,
+  `pname` varchar(100) NOT NULL,
+  `pinfo` varchar(350) DEFAULT NULL,
+  `pprice` decimal(12,2) DEFAULT NULL,
+  `pquantity` int DEFAULT NULL,
+  `image` varchar(500) DEFAULT NULL,
+  `sale` decimal(2,2) DEFAULT NULL,
+  `settingId` int NOT NULL,
+  `status` int DEFAULT NULL,
+  PRIMARY KEY (`pid`),
+  KEY `FK_product_setting` (`settingId`),
+  KEY `fk_status_idx` (`status`),
+  CONSTRAINT `FK_product_setting` FOREIGN KEY (`settingId`) REFERENCES `setting` (`id`),
+  CONSTRAINT `fk_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Inserting data into FeedBacks table
+--
+-- Dumping data for table `product`
+--
 
--- Inserting data into orders table
-INSERT INTO orders (orderid, time, email, updateTime, updateBy, userId, amount, status, mobile, address, payment) VALUES
-('ORD123456', '2024-03-07 10:00:00', 'user1@example.com', '2024-03-07 10:05:00', 1, 1, 999.99, 'Completed', '1234567890', '123 Main St, City, Country', 'Credit Card'),
-('ORD789012', '2024-03-08 09:00:00', 'user2@example.com', '2024-03-08 09:10:00', 2, 2, 49.98, 'Pending', '9876543210', '456 Elm St, City, Country', 'PayPal');
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- Inserting data into orderDetail table
-INSERT INTO orderDetail (odId, orderId, productId, quantity, amount) VALUES
-('OD12345601', 'ORD123456', 1, 1, 999.99),
-('OD12345602', 'ORD123456', 2, 2, 39.98),
-('OD78901201', 'ORD789012', 3, 1, 29.99);
+--
+-- Table structure for table `setting`
+--
 
-INSERT INTO FeedBacks (pId, userId, description, rate) VALUES
-(1, 1, 'Great laptop, fast delivery', 5),
-(2, 1, 'Nice t-shirt, fits well', 4),
-(3, 2, 'Excellent book, very informative', 5);
+DROP TABLE IF EXISTS `setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `setting` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `setting`
+--
+
+LOCK TABLES `setting` WRITE;
+/*!40000 ALTER TABLE `setting` DISABLE KEYS */;
+INSERT INTO `setting` VALUES (1,'Admin','Role','Active'),(2,'Customer','Role','Active'),(3,'Mobile','Category','Active');
+/*!40000 ALTER TABLE `setting` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user` (
+  `userId` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(60) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `mobile` bigint NOT NULL,
+  `address` varchar(250) NOT NULL,
+  `pincode` int NOT NULL,
+  `password` varchar(20) NOT NULL,
+  `role` int NOT NULL,
+  `status` int DEFAULT NULL,
+  PRIMARY KEY (`userId`),
+  UNIQUE KEY `email` (`email`),
+  KEY `fk_role_idx` (`role`),
+  KEY `FK_user_status` (`status`),
+  CONSTRAINT `fk_role` FOREIGN KEY (`role`) REFERENCES `setting` (`id`),
+  CONSTRAINT `FK_user_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-03-11 16:27:29

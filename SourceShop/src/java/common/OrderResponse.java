@@ -23,7 +23,7 @@ public class OrderResponse {
     private String email;
     private String address;
     private String saler;
-    private String status;
+    private int status;
     
     public OrderResponse(Order order){
         this.orderId = order.getOrderId();

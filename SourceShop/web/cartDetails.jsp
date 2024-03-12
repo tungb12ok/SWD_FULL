@@ -55,7 +55,7 @@
 
         <jsp:include page="header.jsp" />
         <jsp:include page="/common/Message.jsp" />
-        
+
         <div class="container mt-4">
             <h2>Cart Details</h2>
 
@@ -96,22 +96,35 @@
                                 <td>${ps.getProductById(productId).productName}</td>
                                 <td>${ps.getProductById(productId).productPrice}</td>
                                 <td>${quantity}</td>
-                        <form action="cart" method="POST" id="up">
-                            <input type="text" name="pid" value="${productId}" hidden=""/>
-                            <input type="text" name="updateItem" value="1" hidden=""/>
-                            <td><button type="button" class="btn btn-success btn-add" onclick="submitForm(this)">+</button></td>
-                        </form>
-                        <form action="cart" method="POST" id="down">
-                            <input type="text" name="pid" value="${productId}" hidden=""/>
-                            <input type="text" name="updateItem" value="-1" hidden=""/>
-                            <td><button type="button" class="btn btn-danger btn-remove" onclick="submitForm(this)">-</button></td>
-                        </form>
-                        <td>${quantity * ps.getProductById(productId).productPrice}</td>
-                        <form action="cart" method="POST" id="form-update-cart">
-                            <td>
+                                <c:if test="${type == 'Admin' && view}">
+                                    <td></td>
+                                    <td></td>
+                                </c:if>
+                                <c:if test="${(type == 'Admin' && !view) || type != 'Admin'}">
+                            <form action="cart" method="POST" id="up">
                                 <input type="text" name="pid" value="${productId}" hidden=""/>
-                                <input type="number" class="form-control quantity-update" name="updateItem" value="${quantity}"  onchange="submitForm(this)"></td> 
-                        </form>
+                                <input type="text" name="updateItem" value="1" hidden=""/>
+                                <td><button type="button" class="btn btn-success btn-add" onclick="submitForm(this)">+</button></td>
+                            </form>
+                            <form action="cart" method="POST" id="down">
+                                <input type="text" name="pid" value="${productId}" hidden=""/>
+                                <input type="text" name="updateItem" value="-1" hidden=""/>
+                                <td><button type="button" class="btn btn-danger btn-remove" onclick="submitForm(this)">-</button></td>
+                            </form>
+                        </c:if>  
+
+                        <td>${quantity * ps.getProductById(productId).productPrice}</td>
+                        <c:if test="${type == 'Admin' && view}">
+                            <td></td>
+                        </c:if>
+                        <c:if test="${(type == 'Admin' && !view) || type != 'Admin'}">
+                            <form action="cart" method="POST" id="form-update-cart">
+                                <td>
+                                    <input type="text" name="pid" value="${productId}" hidden=""/>
+                                    <input type="number" class="form-control quantity-update" name="updateItem" value="${quantity}"  onchange="submitForm(this)"></td> 
+                            </form>
+                        </c:if>  
+
                         </tr>
                     </c:forEach>
                 </c:forEach>

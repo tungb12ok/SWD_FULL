@@ -82,7 +82,7 @@
 
                         </td>
                         <td>
-                            <button id="openModalBtn" onclick="openModalOrder('${o.orderId}', '${o.saler}', '${o.status}')">Details</button>
+                            <button id="openModalBtn" onclick="openModalOrder('${o.orderId}', '${o.status}')">Details</button>
                             <c:forEach var="st" items="${status}">
                                 <c:if test="${st.name == 'New' && st.id == o.status}">
                                     <button style="background: linear-gradient(rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.5)), #000;" onclick="cancelOrder('${o.orderId}')">Cancel</button>
@@ -158,6 +158,10 @@
                     .catch(error => {
                         console.error('?ã có l?i x?y ra:', error);
                     });
+        }
+        
+        function openModalOrder(orderId, status){
+            window.location.href = './cart?orderId=' + orderId + '&status=' + status; 
         }
     </script>
 </html>

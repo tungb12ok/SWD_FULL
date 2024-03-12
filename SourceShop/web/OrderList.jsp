@@ -93,7 +93,7 @@
                         </td>
                         <td>
                             <button id="openModalBtn" onclick="openModalOrder('${o.orderId}', '${o.saler}', '${o.status}')">Details</button>
-                            <button style="background: linear-gradient(rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.5)), #000;" onclick="">Cancel</button>
+                            <button style="background: linear-gradient(rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.5)), #000;" onclick="CancelOrder(${o.orderId}, ${o.status})">Cancel</button>
                         </td>
                     </tr>
                 </c:forEach>
@@ -193,7 +193,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                },
+                }
             })
                     .then(response => {
                         if (!response.ok) {
@@ -239,7 +239,7 @@
                             // Thêm hàng vào bảng
                             document.getElementById("cartTable").appendChild(tr);
 
-                        })
+                        });
                     })
                     .catch(error => {
                         console.error('?ã có l?i x?y ra:', error);
@@ -267,5 +267,25 @@
             }
             window.location.href = url;
         }
+
+        function CancelOrder(orderId, status) {
+            let url = window.location.href;
+            fetch('order-list?orderId=' + orderId + '&status=' + status, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        window.location.href = url;
+                    })
+                    .catch(error => {
+                        console.error('?ã có l?i x?y ra:', error);
+                    });
+        }
+        
     </script>
 </html>

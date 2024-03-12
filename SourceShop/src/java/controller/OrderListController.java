@@ -160,30 +160,48 @@ public class OrderListController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ProductDAO pd = new ProductDAO();
-        String soId = request.getParameter("orderId");
-        Order od = orderDao.getOrderById(soId);
-        List<OrderDetail> listO = orderDetailDAO.getOrderDetailsByOrderId(od.getOrderId());
-        Map<String, Product> mapP = new HashMap<>();
-        for (OrderDetail odd : listO) {
-            Product p = pd.getProductById(odd.getProductId());
-            mapP.put(odd.getOrderDetailId(), p);
+        String sStatus = request.getParameter("status");
+        if (sStatus != null) {
+            int status = Integer.parseInt(sStatus);
+            String orderId = request.getParameter("oredrId");
+            List<Setting> list = sd.getSettingByType("Status");
+            for (Setting s : list) {
+                if (s.getName().equals("Cancelled")) {
+                    orderDao.updateOrderStatus(orderId, s.getId());
+                }
+            }
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter out = response.getWriter();
+            out.print("Success");
+            out.flush();
+
+        } else {
+            ProductDAO pd = new ProductDAO();
+            String soId = request.getParameter("orderId");
+            Order od = orderDao.getOrderById(soId);
+            List<OrderDetail> listO = orderDetailDAO.getOrderDetailsByOrderId(od.getOrderId());
+            Map<String, Product> mapP = new HashMap<>();
+            for (OrderDetail odd : listO) {
+                Product p = pd.getProductById(odd.getProductId());
+                mapP.put(odd.getOrderDetailId(), p);
+            }
+            Map<Integer, String> mapS = new HashMap<>();
+            List<Setting> list = sd.getSettingByType("Status");
+            for (Setting s : list) {
+                mapS.put(s.getId(), s.getName());
+            }
+            Gson gson = new Gson();
+            JsonObject responseData = new JsonObject();
+            responseData.addProperty("map", gson.toJson(mapP));
+            responseData.addProperty("list", gson.toJson(listO));
+            responseData.addProperty("mapS", gson.toJson(mapS));
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter out = response.getWriter();
+            out.print(responseData.toString());
+            out.flush();
         }
-        Map<Integer, String> mapS = new HashMap<>();
-        List<Setting> list = sd.getSettingByType("Status");
-        for (Setting s : list) {
-            mapS.put(s.getId(), s.getName());
-        }
-        Gson gson = new Gson();
-        JsonObject responseData = new JsonObject();
-        responseData.addProperty("map", gson.toJson(mapP));
-        responseData.addProperty("list", gson.toJson(listO));
-         responseData.addProperty("mapS", gson.toJson(mapS));
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
-        out.print(responseData.toString());
-        out.flush();
     }
 
     /**

@@ -5,6 +5,7 @@
 package controller;
 
 import dao.ProductDAO;
+import dao.SettingDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -26,11 +27,12 @@ public class SearchController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String search = request.getParameter("search") == null ? "" : request.getParameter("search");
-        String filter = request.getParameter("filter")== null ? "" : request.getParameter("filter");
-
+        String filter = request.getParameter("filter") == null ? "" : request.getParameter("filter");
+        SettingDAO sDAO = new SettingDAO();
         ProductDAO pDAO = new ProductDAO();
-        
-        List<Product> p =  pDAO.getFilteredProducts(search, filter);
+
+        request.setAttribute("listCate", sDAO.getSettingByType("Category"));
+        List<Product> p = pDAO.getFilteredProducts(search, filter);
         request.setAttribute("list", p);
         request.getRequestDispatcher("index.jsp").forward(request, response);
 

@@ -32,6 +32,53 @@ public class ProductDAO extends DBcontext {
         }
     }
 
+    public List<Product> getFilteredProducts(String key, String productType) {
+        List<Product> filteredProductList = new ArrayList<>();
+        String sql = "SELECT pid, pname, settingId, pinfo, pprice, pquantity, image, status, sale FROM product WHERE 1=1";
+
+        // Adjust the SQL query based on the input parameters
+        if (key != null && !key.isEmpty()) {
+            sql += " AND (pname LIKE ? OR pinfo LIKE ?)";
+        }
+        if (productType != null && !productType.isEmpty()) {
+            sql += " AND cateId = (SELECT cid FROM category WHERE cat_name = ?)";
+        }
+
+        try ( PreparedStatement statement = connection.prepareStatement(sql)) {
+            int parameterIndex = 1;
+
+            // Set parameters based on the input values
+            if (key != null && !key.isEmpty()) {
+                String likeKey = "%" + key + "%";
+                statement.setString(parameterIndex++, likeKey);
+                statement.setString(parameterIndex++, likeKey);
+            }
+            if (productType != null && !productType.isEmpty()) {
+                statement.setString(parameterIndex, productType);
+            }
+
+            try ( ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Product product = new Product();
+                    product.setProductId(resultSet.getInt("pid"));
+                    product.setProductName(resultSet.getString("pname"));
+                    product.setCateId(resultSet.getInt("settingId"));
+                    product.setProductInfo(resultSet.getString("pinfo"));
+                    product.setProductPrice(resultSet.getDouble("pprice"));
+                    product.setProductQuantity(resultSet.getInt("pquantity"));
+                    product.setImage(resultSet.getString("image"));
+                    product.setStatus(resultSet.getInt("status"));
+                    product.setSale(resultSet.getDouble("sale"));
+                    filteredProductList.add(product);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return filteredProductList;
+    }
+
     public List<Product> getAllProducts() {
         List<Product> productList = new ArrayList<>();
         String sql = "SELECT pid, pname, cateId, pinfo, pprice, pquantity, image, status, sale FROM product";
@@ -200,8 +247,7 @@ public class ProductDAO extends DBcontext {
         String sql = "SELECT * FROM product";
         if (key != null || pid != -1) {
             sql += " WHERE pid = ? OR pname LIKE ?";
-        }
-        else {
+        } else {
             sql += " where pname like '%%'";
         }
         if (cateId != 0) {
@@ -264,7 +310,6 @@ public class ProductDAO extends DBcontext {
         }
     }
 
-    
     public int addCategory(String name) {
         String sql = "INSERT INTO categories (name) VALUES (?)";
         try {
@@ -335,5 +380,6 @@ public class ProductDAO extends DBcontext {
 //                System.out.println("Failed to delete product.");
 //            }
 //        }
+        System.out.println(dao.getFilteredProducts("", ""));
     }
 }

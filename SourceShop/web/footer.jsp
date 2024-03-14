@@ -50,7 +50,8 @@
                             <div class="row">
                                 <div class="col-sm-6 form-group">
                                     <input class="form-control" id="name" name="name"
-                                           placeholder="Name" type="text" required>
+                                           placeholder="Name" type="text" required
+                                           value="${user.name}" disabled="">
                                 </div>
                                 <div class="col-sm-6 form-group">
                                     <select name="type"  class="form-control" required="">
@@ -63,12 +64,14 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-6 form-group">
-                                    <input class="form-control" id="name" name="name"
-                                           placeholder="Name" type="text" required>
+                                    <input class="form-control" id="email" name="email"
+                                           placeholder="email" type="text" required
+                                           value="${user.email}"disabled="">
                                 </div>
                                 <div class="col-sm-6 form-group">
-                                    <input class="form-control" id="email" name="email"
-                                           placeholder="Email" type="email" required>
+                                    <input class="form-control" id="mobile" name="mobile"
+                                           placeholder="mobile" type="mobile" required
+                                           value="${user.mobile}" disabled="">
                                 </div>
                             </div>
                             <textarea class="form-control" id="comments" name="comments"

@@ -12,6 +12,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.Product;
 
 /**
  *
@@ -20,23 +22,18 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "SearchController", urlPatterns = {"/search"})
 public class SearchController extends HttpServlet {
 
-   
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String search = request.getParameter("key");
-        String filter = request.getParameter("filter");
-        int idS;
-        try {
-            idS = Integer.parseInt(filter);
-        } catch (Exception e) {
-            idS = 0;
-        }
+        String search = request.getParameter("search") == null ? "" : request.getParameter("search");
+        String filter = request.getParameter("filter")== null ? "" : request.getParameter("filter");
+
         ProductDAO pDAO = new ProductDAO();
         
-        request.setAttribute("list", pDAO.getTotalProductsFilter(search, 0, idS, 0));
+        List<Product> p =  pDAO.getFilteredProducts(search, filter);
+        request.setAttribute("list", p);
         request.getRequestDispatcher("index.jsp").forward(request, response);
-        
+
     }
 
     @Override
@@ -44,6 +41,5 @@ public class SearchController extends HttpServlet {
             throws ServletException, IOException {
 
     }
-
 
 }

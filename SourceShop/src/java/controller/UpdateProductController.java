@@ -21,7 +21,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.StringReader;
-import model.Categories;
 import model.Product;
 import model.Setting;
 

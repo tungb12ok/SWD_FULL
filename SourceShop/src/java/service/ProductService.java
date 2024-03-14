@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package services;
+package service;
 
 import dao.ProductDAO;
 import java.util.List;
@@ -26,6 +26,6 @@ public class ProductService {
 
     public static void main(String[] args) {
         ProductService ps = new ProductService();
-        System.out.println(ps.getProductById(2));
+        System.out.println(ps.getProduct("12"));
     }
 }

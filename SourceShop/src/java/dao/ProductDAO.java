@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import model.Categories;
 
 public class ProductDAO extends DBcontext {
 
@@ -265,44 +264,7 @@ public class ProductDAO extends DBcontext {
         }
     }
 
-    public List<Categories> getAllCategories() {
-        List<Categories> categorieses = new ArrayList<>();
-        String sql = "SELECT * FROM categories";
-        try ( PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            try ( ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Categories cate = new Categories();
-                    cate.setCateId(resultSet.getInt("id"));
-                    cate.setName(resultSet.getString("name"));
-                    categorieses.add(cate);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return categorieses;
-    }
-
-    public Categories getCategoriesByName(String name) {
-        Categories cate = new Categories();
-        String sql = "SELECT * FROM categories where name =?";
-        try ( PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, name);
-            try ( ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    cate.setCateId(resultSet.getInt("id"));
-                    cate.setName(resultSet.getString("name"));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return cate;
-    }
-
+    
     public int addCategory(String name) {
         String sql = "INSERT INTO categories (name) VALUES (?)";
         try {

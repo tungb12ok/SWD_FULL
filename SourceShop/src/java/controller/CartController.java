@@ -21,7 +21,7 @@ import java.util.Map;
 import model.Cart;
 import model.OrderDetail;
 import model.User;
-import services.ProductService;
+import service.ProductService;
 
 /**
  *
@@ -37,8 +37,7 @@ public class CartController extends HttpServlet {
         ProductService ps = new ProductService();
         User u = (User) session.getAttribute("user");
         if (u == null) {
-            request.getRequestDispatcher("signIn").forward(request, response);
-            return;
+            u = (User) session.getAttribute("userCart");
         }
         String sStatus = request.getParameter("status");
         if (sStatus != null) {
@@ -74,6 +73,8 @@ public class CartController extends HttpServlet {
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 return;
             }
+            double a = cart.calculateTotalForUser(u.getUserId());
+            request.setAttribute("total", a);
             request.setAttribute("ps", ps);
             request.setAttribute("cart", cart);
             request.getRequestDispatcher("cartDetails.jsp").forward(request, response);
@@ -90,8 +91,7 @@ public class CartController extends HttpServlet {
 
         User u = (User) session.getAttribute("user");
         if (u == null) {
-            request.getRequestDispatcher("signIn").forward(request, response);
-            return;
+            u = (User) session.getAttribute("userCart");
         }
 
         String pId = request.getParameter("pid");

@@ -1,3 +1,4 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -52,8 +53,12 @@
                                            placeholder="Name" type="text" required>
                                 </div>
                                 <div class="col-sm-6 form-group">
-                                    <input class="form-control" id="email" name="email"
-                                           placeholder="Email" type="email" required>
+                                    <select name="type"  class="form-control" required="">
+                                        <option>Choose type of contact</option>
+                                        <c:forEach var="i" items="${contact}">
+                                            <option value="${i.id}">${i.name}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
                             <div class="row">

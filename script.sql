@@ -1,8 +1,8 @@
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: localhost    Database: shoppingcart
+-- Host: 127.0.0.1    Database: shoppingcart
 -- ------------------------------------------------------
--- Server version	8.2.0
+-- Server version	8.0.34
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -104,6 +104,7 @@ CREATE TABLE `orderdetail` (
 
 LOCK TABLES `orderdetail` WRITE;
 /*!40000 ALTER TABLE `orderdetail` DISABLE KEYS */;
+INSERT INTO `orderdetail` VALUES ('OD123','ORD123',9,2,100.00),('OD124','ORD123',5,1,75.00),('OD125','ORD124',6,3,150.00),('OD126','ORD125',7,1,25.00),('OD127','ORD126',8,2,300.00);
 /*!40000 ALTER TABLE `orderdetail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,6 +141,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES ('ORD123','2024-03-11 17:00:00','user1@example.com','2024-03-11 17:05:00',6,7,50.00,'1234567890','123 Street, City','Credit Card',9),('ORD124','2024-03-11 17:15:00','user2@example.com','2024-03-11 17:20:00',6,8,75.00,'2345678901','456 Avenue, Town','PayPal',9),('ORD125','2024-03-11 17:30:00','user3@example.com','2024-03-11 17:35:00',6,9,100.00,'3456789012','789 Road, Village','Cash on Delivery',10),('ORD126','2024-03-11 17:45:00','user4@example.com','2024-03-11 17:50:00',6,7,25.00,'4567890123','987 Lane, Countryside','Credit Card',11),('ORD127','2024-03-11 18:00:00','user5@example.com','2024-03-11 18:05:00',6,8,150.00,'5678901234','654 Boulevard, Suburb','PayPal',8);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,7 +167,7 @@ CREATE TABLE `product` (
   KEY `fk_status_idx` (`status`),
   CONSTRAINT `FK_product_setting` FOREIGN KEY (`settingId`) REFERENCES `setting` (`id`),
   CONSTRAINT `fk_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,6 +176,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES (5,'T-Shirt','Cotton T-Shirt',20.00,100,'https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/Products/Images/42/309816/xiaomi-13t-pro-xanh-thumb-600x600.jpg',0.10,7,13),(6,'Sneakers','Leather Sneakers',80.00,30,'http://localhost:9999/SourceShop/images/1710168682668_acer-aspire-7-gaming600x600.jpg',0.00,6,12),(7,'Sneakers','Leather Sneakers',80.00,30,'http://localhost:9999/SourceShop/ProductController',0.00,5,12),(8,'Dress Shirt','Cotton Dress Shirt',40.00,75,'http://localhost:9999/SourceShop/ProductController',0.00,5,12),(9,'Skirt','Polyester Skirt',35.00,60,'https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/Products/Images/60/290326/op-lung-magsafe-iphone-14-pro-max-nhua-trong-apple-mpu73-thumb-600x600.jpg',0.00,6,12),(10,'Jacket','Leather Jacket',100.00,25,'https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/Products/Images/60/290326/op-lung-magsafe-iphone-14-pro-max-nhua-trong-apple-mpu73-thumb-600x600.jpg',0.00,7,12),(11,'Dress','Silk Dress',70.00,40,'https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/Products/Images/7264/231852/elio-el028-02-nu-thumb-fix-600x600.jpg',0.10,6,12),(12,'Blouse','Cotton Blouse',30.00,45,'https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/Products/Images/42/311120/vivo-y36-xanh-thumbnew-600x600.jpg',0.10,5,12),(13,'Shorts','Denim Shorts',25.00,80,'https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/Products/Images/44/288199/lenovo-ideapad-5-pro-14iap7-i7-82sh002svn-ab-thumb-600x600.jpg',0.10,7,12),(14,'Sweater','Wool Sweater',60.00,55,'https://img.tgdd.vn/imgt/f_webp,fit_outside,quality_100/https://cdn.tgdd.vn/Products/Images/7077/306530/befit-watch-fit-hong-tn-600x600.jpg',0.10,3,12),(15,'Jeans',' aaaaaaaaaaaaaaa',5011.00,50,'http://localhost:9999/SourceShop/images/1710168509914_acer-aspire-7-gaming600x600.jpg',0.00,6,12),(16,'Sneakers','Leather Sneakers',80.00,30,'http://localhost:9999/SourceShop/images/1710168682668_acer-aspire-7-gaming600x600.jpg',0.00,6,12);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,7 +193,7 @@ CREATE TABLE `setting` (
   `type` varchar(50) NOT NULL,
   `status` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +202,7 @@ CREATE TABLE `setting` (
 
 LOCK TABLES `setting` WRITE;
 /*!40000 ALTER TABLE `setting` DISABLE KEYS */;
-INSERT INTO `setting` VALUES (1,'Admin','Role','Active'),(2,'Customer','Role','Active'),(3,'Mobile','Category','Active');
+INSERT INTO `setting` VALUES (1,'Admin','Role','Active'),(2,'Customer','Role','Active'),(3,'Mobile','Category','Active'),(5,'TV','Category','Active'),(6,'Ipad','Category','Active'),(7,'Laptop','Category','Active'),(8,'New','Status','Active'),(9,'Cancelled','Status','Active'),(10,'Shipping','Status','Active'),(11,'Paid','Status','Active'),(12,'Active','Product','Active'),(13,'InActive','Product','Active'),(14,'Samsung','Category','Active');
 /*!40000 ALTER TABLE `setting` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,7 +229,7 @@ CREATE TABLE `user` (
   KEY `FK_user_status` (`status`),
   CONSTRAINT `fk_role` FOREIGN KEY (`role`) REFERENCES `setting` (`id`),
   CONSTRAINT `FK_user_status` FOREIGN KEY (`status`) REFERENCES `setting` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -235,6 +238,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (6,'user1@example.com','User 1',1234567890,'123 Street, City',12345,'password1',1,12),(7,'user2@example.com','User 2',2345678901,'456 Avenue, Town',23456,'password2',2,12),(8,'user3@example.com','User 3',3456789012,'789 Road, Village',34567,'password3',2,12),(9,'user4@example.com','User 4',4567890123,'987 Lane, Countryside',45678,'password4',2,12);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -247,4 +251,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-11 16:27:29
+-- Dump completed on 2024-03-13 20:16:38

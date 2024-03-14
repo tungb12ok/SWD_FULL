@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.authentication;
+package controller;
 
 import dao.ProductDAO;
 import java.io.IOException;
@@ -17,14 +17,26 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author tungl
  */
-@WebServlet(name = "SignOutController", urlPatterns = {"/signOut"})
-public class SignOutController extends HttpServlet {
+@WebServlet(name = "SearchController", urlPatterns = {"/search"})
+public class SearchController extends HttpServlet {
 
+   
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getSession().setAttribute("user", null);
-        response.sendRedirect("home");
+        String search = request.getParameter("key");
+        String filter = request.getParameter("filter");
+        int idS;
+        try {
+            idS = Integer.parseInt(filter);
+        } catch (Exception e) {
+            idS = 0;
+        }
+        ProductDAO pDAO = new ProductDAO();
+        
+        request.setAttribute("list", pDAO.getTotalProductsFilter(search, 0, idS, 0));
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+        
     }
 
     @Override
@@ -32,5 +44,6 @@ public class SignOutController extends HttpServlet {
             throws ServletException, IOException {
 
     }
+
 
 }

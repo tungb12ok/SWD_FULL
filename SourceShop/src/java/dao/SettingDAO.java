@@ -102,6 +102,6 @@ public class SettingDAO extends DBcontext {
 
     public static void main(String[] args) {
         SettingDAO sd = new SettingDAO();
-        System.out.println(sd.getIdByName("Active"));
+        System.out.println(sd.getSettingByType("Category"));
     }
 }

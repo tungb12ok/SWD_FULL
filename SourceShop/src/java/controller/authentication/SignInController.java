@@ -44,6 +44,7 @@ public class SignInController extends HttpServlet {
                 session.setAttribute("messError", "Email or password incorect!");
             } else {
                 session.setAttribute("user", u);
+                session.setAttribute("userCart", u);
                 session.setAttribute("messSuccess", "Login successfuly!");
                 if(u.getRole() == 1){
                     response.sendRedirect("ProductController");

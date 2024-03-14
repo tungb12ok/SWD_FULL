@@ -1,22 +1,40 @@
 package dao;
 
+import java.sql.Date;
 import model.Order;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAO extends DBcontext {
 
-    public boolean addOrder(Order order, int userId) {
-        String sql = "INSERT INTO [dbo].[orders] (orderid, userId, amount, status) VALUES (?, ?, ?, ?)";
+    public boolean createOrder(Order order) {
+        String sql = "INSERT INTO orders (orderid, userId, amount, status, time, email, updateTime, updateBy, address, payment, mobile) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try ( PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, order.getOrderId());
-            statement.setInt(2, userId);
+            if (order.getUserId() == 0) {
+                statement.setNull(2, Types.INTEGER);
+            } else {
+                statement.setInt(2, order.getUserId());
+            }
             statement.setDouble(3, order.getAmount());
             statement.setInt(4, order.getStatus());
+            statement.setDate(5, new java.sql.Date(order.getTime().getTime()));
+            statement.setString(6, order.getEmail());
+            statement.setDate(7, new java.sql.Date(order.getUpdateTime().getTime()));
+            if (order.getUpdateBy()== 0) {
+                statement.setNull(8, Types.INTEGER);
+            } else {
+                statement.setInt(8, order.getUpdateBy());
+            }
+            statement.setString(9, order.getAddress());
+            statement.setString(10, order.getPayment());
+            statement.setString(11, order.getMobile());
 
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
@@ -155,35 +173,22 @@ public class OrderDAO extends DBcontext {
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
         System.out.println(dao.getAllOrdersByUserId(1));
-        // Add order example
-//        Order newOrder = new Order();
-//        newOrder.setOrderId("123");
-//        newOrder.setUserId(1);
-//        newOrder.setAmount(50.00);
-//        newOrder.setStatus("Pending");
-//        dao.addOrder(newOrder, 1);
-//
-//        // Get all orders example
-//        List<Order> orders = dao.getAllOrders();
-//        System.out.println("All Orders: " + orders);
-//
-//        // Get order by id example
-//        Order orderById = dao.getOrderById("123");
-//        System.out.println("Order by ID: " + orderById);
-//
-//        // Update order example
-//        Order orderToUpdate = new Order();
-//        orderToUpdate.setOrderId("123");
-//        orderToUpdate.setUserId(1);
-//        orderToUpdate.setAmount(60.00);
-//        orderToUpdate.setStatus("Completed");
-//        dao.updateOrder(orderToUpdate);
-//
-//        // Get updated order
-//        Order updatedOrder = dao.getOrderById("123");
-//        System.out.println("Updated Order: " + updatedOrder);
-//
-//        // Delete order example
-//        dao.deleteOrder("123");
+        OrderDAO orderDAO = new OrderDAO();
+
+        // Create a sample order
+        Order order = new Order();
+        order.setOrderId("1211345"); // Set a unique order ID
+        order.setAmount(100.0); // Set the order amount
+        order.setStatus(8); // Set the order status
+        order.setTime(new Date(System.currentTimeMillis())); // Set the current time as the order time
+        order.setEmail("example@example.com"); // Set the user's email
+        order.setUpdateTime(new Date(System.currentTimeMillis())); // Set the current time as the update time
+        order.setAddress("123 Example St, City, Country"); // Set the delivery address
+        order.setPayment("Credit Card"); // Set the payment method
+        order.setMobile("1234567890"); // Set the user's mobile number
+
+        // Call the createOrder method and check if the order was successfully created
+        boolean success = orderDAO.createOrder(order);
+        System.out.println(success);
     }
 }

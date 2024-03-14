@@ -32,11 +32,14 @@
                                 <input type="hidden" name="uid" value="${user.userId}">
                                 <input type="hidden" name="pid" value="${i.productId}">
 
-                                <button type="submit" name="action" value="addToCart" class="btn btn-success">Add to Cart</button>
+                                <c:if test="${!cart.containsProduct(userCart.userId, i.productId) && userCart != null }">
+                                    <button type="submit" name="action" value="addToCart" class="btn btn-success">Add to Cart</button>
+                                </c:if>
                                 &nbsp;&nbsp;&nbsp;
-                                <c:if test="${cart.containsProduct(user.userId, i.productId)}">
+                                <c:if test="${cart.containsProduct(userCart.userId, i.productId) && userCart != null}">
                                     <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
                                 </c:if>
+
                                 &nbsp;&nbsp;&nbsp;
 
                                 <button type="submit" name="action" value="checkout" class="btn btn-success">Pay Now</button>

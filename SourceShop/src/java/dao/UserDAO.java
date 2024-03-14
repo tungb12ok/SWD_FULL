@@ -187,16 +187,7 @@ public class UserDAO extends DBcontext {
         // Tạo một đối tượng UserDAO
         UserDAO userDAO = new UserDAO();
 
-        // Tạo một đối tượng User mới để thêm vào cơ sở dữ liệu
-        User newUser = new User();
-        newUser.setEmail("newuser@example.com");
-        newUser.setName("New User");
-        newUser.setMobile("1234567890");
-        newUser.setAddress("123 New Street");
-        newUser.setPincode(12345);
-        newUser.setPassword("password");
-        newUser.setStatus(12);
-        newUser.setRole(1);
+        System.out.println(userDAO.login("user2@example.com", "23456"));
 
         // Thêm người dùng mới vào cơ sở dữ liệu
     }

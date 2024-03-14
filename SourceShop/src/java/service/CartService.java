@@ -1,15 +1,23 @@
-package model;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package service;
 
 import dao.ProductDAO;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Cart {
+/**
+ *
+ * @author tungl
+ */
+public class CartService {
 
     private Map<Integer, Map<Integer, Integer>> items;
     ProductDAO dao = new ProductDAO();
 
-    public Cart() {
+    public CartService() {
         this.items = new HashMap<>();
     }
 
@@ -149,5 +157,4 @@ public class Cart {
     public void removeUserFromCart(int userId) {
         items.remove(userId);
     }
-
 }

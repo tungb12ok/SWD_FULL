@@ -8,11 +8,11 @@ import lombok.Data;
 
 /**
  *
- * @author win
+ * @author tungl
  */
-
 @Data
-public class Categories {
-    private int cateId;
-    private String name;
+public class Contact {
+    int userId;
+    String description;
+    int settingId;
 }

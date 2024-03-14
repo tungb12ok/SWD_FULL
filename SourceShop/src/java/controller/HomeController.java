@@ -4,15 +4,18 @@
  */
 package controller;
 
-import dao.CateDAO;
+import dao.SettingDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
@@ -28,24 +31,38 @@ public class HomeController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ProductService ps = new ProductService();
-//        User u = (User) request.getSession().getAttribute("user");
-//        if (u == null) {
-//            u = new User();
-//            Random random = new Random();
-//            int userId = random.nextInt(100000); // Giả sử userId là một số ngẫu nhiên trong khoảng từ 0 đến 999999
-//            u.setUserId(2);
-//            request.getSession().setAttribute("userGuest", u);
-//        }
+        HttpSession session = request.getSession();
+        User u = (User) session.getAttribute("user");
+        SettingDAO sDAO = new SettingDAO();
+        request.setAttribute("contact", sDAO.getSettingByType("Contact"));
+        if (u == null) {
+            int userId = 0; // Giá trị mặc định nếu không tìm thấy userId trong cookie
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("userId")) {
+                        userId = Integer.parseInt(cookie.getValue());
+                        break;
+                    }
+                }
+            }
 
-        CateDAO cDAO = new CateDAO();
-        try {
-            request.setAttribute("listCate", cDAO.getAll());
-        } catch (SQLException ex) {
-            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
+            if (userId == 0) {
+                Random random = new Random();
+                userId = random.nextInt(10000) + 1; // Tạo userId ngẫu nhiên trong phạm vi 1 - 10000
+                // Lưu userId vào cookie
+                Cookie userIdCookie = new Cookie("userId", String.valueOf(userId));
+                userIdCookie.setMaxAge(24 * 60 * 60); // Thời gian sống của cookie (ở đây là 1 ngày)
+                response.addCookie(userIdCookie);
+            }
+            u = new User();
+            u.setUserId(userId);
+            session.setAttribute("userCart", u);
         }
-        request.setAttribute("list", ps.getProduct("Active"));
+
+        request.setAttribute("listCate", sDAO.getSettingByType("Category"));
+
+        request.setAttribute("list", ps.getProduct("12"));
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 

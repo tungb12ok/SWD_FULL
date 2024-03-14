@@ -26,6 +26,6 @@ public class ProductService {
 
     public static void main(String[] args) {
         ProductService ps = new ProductService();
-        System.out.println(ps.getProductById(2));
+        System.out.println(ps.getProduct("12"));
     }
 }

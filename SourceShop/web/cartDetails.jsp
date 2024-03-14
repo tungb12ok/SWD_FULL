@@ -3,13 +3,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Cart Details</title>
+        <title>Ellison Electronics</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <link rel="stylesheet"
+              href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/changes.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
         <style>
             .btn-group a {
                 text-decoration: none;
@@ -84,55 +83,55 @@
                     <!-- Loop through the cart items and display each product -->
                     <c:forEach var="cartItem" items="${cart.items}">
                         <c:set var="userId" value="${cartItem.key}" />
-                        <c:set var="userCart" value="${cartItem.value}" />
-
-                        <c:forEach var="productEntry" items="${userCart}">
-                            <c:set var="productId" value="${productEntry.key}" />
-                            <c:set var="quantity" value="${productEntry.value}" />
-
-                            <tr>
-                                <!-- Now you can use productId, userId, and quantity as needed -->
-                                <td class="thumbnail"><img src="${ps.getProductById(productId).image}" alt="Product Image" class="img-thumbnail w-30 h-30"></td>
-                                <td>${ps.getProductById(productId).productName}</td>
-                                <td>${ps.getProductById(productId).productPrice}</td>
-                                <td>${quantity}</td>
-                                <c:if test="${type == 'Admin' && view}">
-                                    <td></td>
-                                    <td></td>
-                                </c:if>
-                                <c:if test="${(type == 'Admin' && !view) || type != 'Admin'}">
-                            <form action="cart" method="POST" id="up">
-                                <input type="text" name="pid" value="${productId}" hidden=""/>
-                                <input type="text" name="updateItem" value="1" hidden=""/>
-                                <td><button type="button" class="btn btn-success btn-add" onclick="submitForm(this)">+</button></td>
-                            </form>
-                            <form action="cart" method="POST" id="down">
-                                <input type="text" name="pid" value="${productId}" hidden=""/>
-                                <input type="text" name="updateItem" value="-1" hidden=""/>
-                                <td><button type="button" class="btn btn-danger btn-remove" onclick="submitForm(this)">-</button></td>
-                            </form>
-                        </c:if>  
-
-                        <td>${quantity * ps.getProductById(productId).productPrice}</td>
-                        <c:if test="${type == 'Admin' && view}">
-                            <td></td>
-                        </c:if>
-                        <c:if test="${(type == 'Admin' && !view) || type != 'Admin'}">
-                            <form action="cart" method="POST" id="form-update-cart">
-                                <td>
+                        <c:set var="a" value="${cartItem.value}" />
+                        <c:if test="${userCart.userId == userId}">
+                            <c:forEach var="productEntry" items="${a}">
+                                <c:set var="productId" value="${productEntry.key}" />
+                                <c:set var="quantity" value="${productEntry.value}" />
+                                <tr>
+                                    <!-- Now you can use productId, userId, and quantity as needed -->
+                                    <td class="thumbnail"><img src="${ps.getProductById(productId).image}" alt="Product Image" class="img-thumbnail w-30 h-30"></td>
+                                    <td>${ps.getProductById(productId).productName}</td>
+                                    <td>${ps.getProductById(productId).productPrice}</td>
+                                    <td>${quantity}</td>
+                                    <c:if test="${type == 'Admin' && view}">
+                                        <td></td>
+                                        <td></td>
+                                    </c:if>
+                                    <c:if test="${(type == 'Admin' && !view) || type != 'Admin'}">
+                                <form action="cart" method="POST" id="up">
                                     <input type="text" name="pid" value="${productId}" hidden=""/>
-                                    <input type="number" class="form-control quantity-update" name="updateItem" value="${quantity}"  onchange="submitForm(this)"></td> 
-                            </form>
-                        </c:if>  
+                                    <input type="text" name="updateItem" value="1" hidden=""/>
+                                    <td><button type="button" class="btn btn-success btn-add" onclick="submitForm(this)">+</button></td>
+                                </form>
+                                <form action="cart" method="POST" id="down">
+                                    <input type="text" name="pid" value="${productId}" hidden=""/>
+                                    <input type="text" name="updateItem" value="-1" hidden=""/>
+                                    <td><button type="button" class="btn btn-danger btn-remove" onclick="submitForm(this)">-</button></td>
+                                </form>
+                            </c:if>  
+                            <td>${ps.getProductById(productId).productPrice * quantity}</td>
+                            <c:if test="${type == 'Admin' && view}">
+                                <td></td>
+                            </c:if>
+                            <c:if test="${(type == 'Admin' && !view) || type != 'Admin'}">
+                                <form action="cart" method="POST" id="form-update-cart">
+                                    <td>
+                                        <input type="text" name="pid" value="${productId}" hidden=""/>
+                                        <input type="number" class="form-control quantity-update" name="updateItem" value="${quantity}"  onchange="submitForm(this)"></td> 
+                                </form>
+                            </c:if>  
 
-                        </tr>
-                    </c:forEach>
+                            </tr>
+                        </c:forEach>
+                    </c:if>
                 </c:forEach>
                 </tbody>
             </table>
             <input type="text" name="action" value="updateItem" hidden=""/>
-
-            <p>Total Amount: ${cart.calculateTotalAmount()}</p>
+            
+            <p>Total Amount: ${total}</p>
+            <a href="checkout" class="btn btn-success">Pay now</a>
         </div>
 
         <%@ include file="footer.jsp"%>

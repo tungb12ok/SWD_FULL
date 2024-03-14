@@ -61,7 +61,6 @@ public class HomeController extends HttpServlet {
         }
 
         request.setAttribute("listCate", sDAO.getSettingByType("Category"));
-
         request.setAttribute("list", ps.getProduct("12"));
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }

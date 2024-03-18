@@ -45,7 +45,11 @@ public class CheckOutController extends HttpServlet {
             u = (User) session.getAttribute("userCart");
         }
         Cart cart = (Cart) session.getAttribute("cart");
-
+        if(cart == null){
+            session.setAttribute("messError", "Cart null!");
+            response.sendRedirect("home");
+            return;
+        }
         Map<Integer, Integer> userCart = cart.getCartByUserId(u.getUserId());
         int totalProducts = 0;
         if (userCart != null) {

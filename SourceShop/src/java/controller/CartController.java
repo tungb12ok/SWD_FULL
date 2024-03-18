@@ -117,6 +117,16 @@ public class CartController extends HttpServlet {
             return;
         }
         if (action != null) {
+            if (request.getParameter("action").equals("checkout")) {
+                try {
+                    cart.addItem(u.getUserId(), Integer.parseInt(pId));
+                    session.setAttribute("messSuccess", "Add cart successfuly!");
+                } catch (Exception e) {
+                    session.setAttribute("messError", "Add cart failed!");
+                }
+                response.sendRedirect("checkout");
+                return;
+            }
             if (action.equals("decreaseItem")) {
                 try {
                     cart.decreaseItemQuantity(u.getUserId(), Integer.parseInt(pId), 1);
@@ -137,6 +147,10 @@ public class CartController extends HttpServlet {
                 try {
                     cart.removeItem(u.getUserId(), Integer.parseInt(pId));
                     session.setAttribute("messSuccess", "Remove from cart successfuly!");
+                    if (request.getParameter("mode") != null) {
+                        response.sendRedirect("cart");
+                        return;
+                    }
                 } catch (Exception e) {
                     session.setAttribute("messError", "Remove from cart failed!");
                 }

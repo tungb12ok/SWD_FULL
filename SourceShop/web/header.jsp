@@ -114,9 +114,15 @@
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a href="cart"><i class="fa fa-shopping-cart"></i> Cart <span class="badge">${sessionScope.cart.getProductCountByUserId(user.userId)}</span></a></li>
-                                    <c:choose>
-                                        <c:when test="${user == null}">
+                            <c:if test="${user.role == 2}">
+                                <li><a href="cart"><i class="fa fa-shopping-cart"></i> Cart <span class="badge">${sessionScope.cart.getProductCountByUserId(user.userId)}</span></a></li>
+                                    </c:if>
+                                    <c:if test="${user.role ==1}">
+                                <li><a href="order-list">List Order</a></li>
+                                <li><a href="ProductController">List Product</a></li>
+                            </c:if>
+                            <c:choose>
+                                <c:when test="${user == null}">
                                     <li><a href="signIn">Login</a></li>
                                     <li><a href="signUp">Register</a></li>
                                     </c:when>

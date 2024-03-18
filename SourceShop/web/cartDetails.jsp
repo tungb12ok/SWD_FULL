@@ -77,6 +77,7 @@
                         <th>-</th> <!-- Change Remove button to - -->
                         <th class="sortable" onclick="sortTable(5)">Amount</th>
                         <th>Update</th> <!-- New column for updating quantity -->
+                        <th>Remove</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,7 +122,16 @@
                                         <input type="number" class="form-control quantity-update" name="updateItem" value="${quantity}"  onchange="submitForm(this)"></td> 
                                 </form>
                             </c:if>  
-
+                            <td>
+                                <form method="post" action="./cart">
+                                    <input type="hidden" name="uid" value="${user.userId}">
+                                    <input type="hidden" name="pid" value="${productId}">
+                                    <input type="hidden" name="mode" value="cart">
+                                    <c:if test="${cart.containsProduct(userCart.userId, productId) && userCart != null}">
+                                        <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
+                                    </c:if>
+                                </form>
+                            </td>
                             </tr>
                         </c:forEach>
                     </c:if>
@@ -129,7 +139,7 @@
                 </tbody>
             </table>
             <input type="text" name="action" value="updateItem" hidden=""/>
-            
+
             <p>Total Amount: ${total}</p>
             <a href="checkout" class="btn btn-success">Pay now</a>
         </div>

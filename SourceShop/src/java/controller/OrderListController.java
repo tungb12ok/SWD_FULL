@@ -81,7 +81,7 @@ public class OrderListController extends HttpServlet {
                 }
                 continue;
             }
-        } else if (sStatus != null) {
+        } else if (sStatus != null && sStatus != "") {
             int status = Integer.parseInt(sStatus);
             for (Order order : listO) {
                 if (order.getStatus() == status) {
@@ -91,7 +91,7 @@ public class OrderListController extends HttpServlet {
             }
             System.out.println(status + "vvvv");
             System.out.println(listAfter);
-        } else if (admin != null) {
+        } else if (admin != null  && admin != "") {
             int adminId = Integer.parseInt(admin);
             for (Order order : listO) {
                 if (order.getUpdateBy() == adminId) {

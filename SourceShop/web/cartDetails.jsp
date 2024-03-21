@@ -121,17 +121,24 @@
                                         <input type="text" name="pid" value="${productId}" hidden=""/>
                                         <input type="number" class="form-control quantity-update" name="updateItem" value="${quantity}"  onchange="submitForm(this)"></td> 
                                 </form>
-                            </c:if>  
-                            <td>
-                                <form method="post" action="./cart">
-                                    <input type="hidden" name="uid" value="${user.userId}">
-                                    <input type="hidden" name="pid" value="${productId}">
-                                    <input type="hidden" name="mode" value="cart">
-                                    <c:if test="${cart.containsProduct(userCart.userId, productId) && userCart != null}">
-                                        <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
-                                    </c:if>
-                                </form>
-                            </td>
+                            </c:if> 
+
+                            <c:if test="${type == 'Admin' && view}">
+                                <td></td>
+                            </c:if>
+                            <c:if test="${(type == 'Admin' && !view) || type != 'Admin'}">
+                                <td>
+                                    <form method="post" action="./cart">
+                                        <input type="hidden" name="uid" value="${user.userId}">
+                                        <input type="hidden" name="pid" value="${productId}">
+                                        <input type="hidden" name="mode" value="cart">
+                                        <c:if test="${cart.containsProduct(userCart.userId, productId) && userCart != null}">
+                                            <button type="submit" name="action" value="removeFromCart" class="btn btn-danger">Remove From Cart</button>
+                                        </c:if>
+                                    </form>
+                                </td>
+                            </c:if> 
+
                             </tr>
                         </c:forEach>
                     </c:if>
@@ -141,7 +148,10 @@
             <input type="text" name="action" value="updateItem" hidden=""/>
 
             <p>Total Amount: ${total}</p>
-            <a href="checkout" class="btn btn-success">Pay now</a>
+            <c:if test="${(type == 'Admin' && !view) || type != 'Admin'}">
+                <a href="checkout" class="btn btn-success">Pay now</a>
+            </c:if> 
+
         </div>
 
         <%@ include file="footer.jsp"%>

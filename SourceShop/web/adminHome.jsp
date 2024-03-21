@@ -350,6 +350,7 @@
                         method: 'GET'
                     })
                             .then(response => {
+                                removeOption();
                                 if (response.status === 200) {
                                     window.location.href = './ProductController';
                                 }

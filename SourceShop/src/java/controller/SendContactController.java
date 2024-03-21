@@ -26,6 +26,17 @@ public class SendContactController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        if (request.getSession().getAttribute("user") == null) {
+            request.getSession().setAttribute("messError", "Must be login!");
+            response.sendRedirect("home");
+            return;
+        }
         String name = request.getParameter("name");
         String type = request.getParameter("type");
         String email = request.getParameter("email");
@@ -43,12 +54,6 @@ public class SendContactController extends HttpServlet {
             request.getSession().setAttribute("messError", "Send Failed!");
         }
         response.sendRedirect("home");
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
     }
 
 }
